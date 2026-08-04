@@ -21,7 +21,7 @@ Nothing in the preparation flow is sent to an app server. Google authentication 
 - Jetpack Compose BOM 2026.06.01 and Material 3
 - Activity Compose 1.13.0 and Lifecycle 2.11.0
 - AndroidX Browser 1.10.0 partial Custom Tabs
-- Android 17 / API 37 target, Android 8+ support
+- Android 17 / API 37 target with Platform 37.0 and Build Tools 37.0.0, Android 8+ support
 - Deterministic local prompt compiler, private file imports, and MediaStore export
 
 The versions are intentionally pinned so CI and local builds are reproducible.
