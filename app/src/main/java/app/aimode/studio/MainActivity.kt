@@ -63,7 +63,6 @@ class MainActivity : ComponentActivity() {
                 .setActivitySideSheetMaximizationEnabled(true)
                 .setActivitySideSheetPosition(CustomTabsIntent.ACTIVITY_SIDE_SHEET_POSITION_END)
                 .setActivitySideSheetDecorationType(CustomTabsIntent.ACTIVITY_SIDE_SHEET_DECORATION_TYPE_SHADOW)
-                .setActivitySideSheetRoundedCornersPosition(CustomTabsIntent.ACTIVITY_SIDE_SHEET_ROUNDED_CORNERS_POSITION_TOP)
                 .setShowTitle(false)
                 .setUrlBarHidingEnabled(true)
                 .setShareState(CustomTabsIntent.SHARE_STATE_ON)
