@@ -6,6 +6,7 @@ plugins {
 android {
     namespace = "app.aimode.studio"
     compileSdk = 37
+    buildToolsVersion = "37.0.0"
 
     defaultConfig {
         applicationId = "app.aimode.studio"
