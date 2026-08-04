@@ -1,7 +1,8 @@
 # Security and privacy
 
 - The embedded portal starts at `https://www.google.com/ai` and renders it directly with Android System WebView.
-- Image decoding, preview, prompt handling, and collage generation happen on-device.
+- Image import, EXIF-aware decoding, preview, ordering, labels, and HD mosaic generation happen on-device.
+- Opening the portal never writes to the clipboard and never exports or uploads the image board. Export is a separate explicit user action.
 - The app does not inject JavaScript, expose a JavaScript bridge, inspect WebView cookies or page content, imitate Google sign-in, or proxy Google traffic.
 - Mixed content and WebView file access are disabled, Safe Browsing is enabled where supported, and non-HTTPS navigation is handed to the operating system rather than loaded in the portal.
 - Camera and microphone requests are accepted only from a verified HTTPS Google origin and still require Android runtime permission from the user.

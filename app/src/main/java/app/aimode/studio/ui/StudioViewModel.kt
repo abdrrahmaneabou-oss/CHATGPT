@@ -1,24 +1,16 @@
 package app.aimode.studio.ui
 
 import android.app.Application
-import android.content.ClipData
-import android.content.ClipboardManager
-import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Build
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import app.aimode.studio.data.StudioRepository
-import app.aimode.studio.domain.PromptEngine
 import app.aimode.studio.media.CollageExporter
-import app.aimode.studio.model.AnswerShape
-import app.aimode.studio.model.PrecisionControl
 import app.aimode.studio.model.StudioUiState
-import app.aimode.studio.model.ThinkingLens
 import app.aimode.studio.model.VisualAsset
 import app.aimode.studio.model.Workspace
-import java.util.Locale
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -32,7 +24,6 @@ import kotlinx.coroutines.withContext
 class StudioViewModel(application: Application) : AndroidViewModel(application) {
     private val repository = StudioRepository(application)
     private val collageExporter = CollageExporter(application)
-    private val clipboard = application.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
 
     private val _state = MutableStateFlow(StudioUiState(workspace = repository.loadWorkspace()))
     val state = _state.asStateFlow()
@@ -42,19 +33,6 @@ class StudioViewModel(application: Application) : AndroidViewModel(application) 
         onBufferOverflow = BufferOverflow.DROP_OLDEST,
     )
     val events = _events.asSharedFlow()
-
-    fun setGoal(goal: String) = updateWorkspace { copy(goal = goal.take(MAX_GOAL_LENGTH)) }
-
-    fun selectLens(lens: ThinkingLens) = updateWorkspace { copy(lens = lens) }
-
-    fun selectAnswerShape(shape: AnswerShape) = updateWorkspace { copy(answerShape = shape) }
-
-    fun togglePrecision(control: PrecisionControl) = updateWorkspace {
-        val next = precision.toMutableSet().apply {
-            if (!add(control)) remove(control)
-        }
-        copy(precision = next)
-    }
 
     fun selectVisual(id: String) = updateWorkspace { copy(selectedVisualId = id) }
 
@@ -133,41 +111,19 @@ class StudioViewModel(application: Application) : AndroidViewModel(application) 
         _state.value = StudioUiState(workspace = empty)
     }
 
-    fun copyPrompt(arabic: Boolean = isArabic()) {
-        val prompt = PromptEngine.compile(_state.value.workspace, arabic)
-        if (prompt.isBlank()) {
-            emit(StudioEvent.EmptyPrompt)
-            return
-        }
-        clipboard.setPrimaryClip(ClipData.newPlainText("AI Mode context capsule", prompt))
-        emit(StudioEvent.Copied)
-    }
-
-    fun prepareAndLaunch(arabic: Boolean = isArabic(), exportBoard: Boolean = true) {
-        if (_state.value.isLaunching) return
+    fun exportBoard(arabic: Boolean) {
+        if (_state.value.isExporting) return
         val workspace = _state.value.workspace
-        val prompt = PromptEngine.compile(workspace, arabic)
-        if (prompt.isBlank()) {
-            emit(StudioEvent.EmptyPrompt)
-            return
-        }
-
-        _state.update { it.copy(isLaunching = true) }
+        if (workspace.visuals.isEmpty()) return
+        _state.update { it.copy(isExporting = true) }
         viewModelScope.launch {
-            val exportResult = if (exportBoard && workspace.visuals.isNotEmpty()) {
-                runCatching { withContext(Dispatchers.IO) { collageExporter.export(workspace, arabic) } }
-            } else {
-                Result.success<Uri?>(null)
+            val exportResult = runCatching {
+                withContext(Dispatchers.IO) { requireNotNull(collageExporter.export(workspace, arabic)) }
             }
-            clipboard.setPrimaryClip(ClipData.newPlainText("AI Mode context capsule", prompt))
             val boardUri = exportResult.getOrNull()?.toString()
-            _state.update { it.copy(isLaunching = false, lastBoardUri = boardUri ?: it.lastBoardUri) }
-            _events.emit(
-                StudioEvent.LaunchPrepared(
-                    boardUri = boardUri,
-                    boardFailed = exportResult.isFailure,
-                ),
-            )
+            _state.update { it.copy(isExporting = false, lastBoardUri = boardUri ?: it.lastBoardUri) }
+            if (boardUri != null) _events.emit(StudioEvent.BoardExported(boardUri))
+            else _events.emit(StudioEvent.BoardExportFailed)
         }
     }
 
@@ -177,8 +133,6 @@ class StudioViewModel(application: Application) : AndroidViewModel(application) 
             Intent.ACTION_SEND -> {
                 if (intent.type?.startsWith("image/") == true) {
                     parcelableUri(intent, Intent.EXTRA_STREAM)?.let { importVisuals(listOf(it)) }
-                } else if (intent.type == "text/plain") {
-                    intent.getStringExtra(Intent.EXTRA_TEXT)?.takeIf { it.isNotBlank() }?.let(::setGoal)
                 }
             }
             Intent.ACTION_SEND_MULTIPLE -> {
@@ -209,20 +163,16 @@ class StudioViewModel(application: Application) : AndroidViewModel(application) 
         if (Build.VERSION.SDK_INT >= 33) intent.getParcelableArrayListExtra(key, Uri::class.java).orEmpty()
         else intent.getParcelableArrayListExtra<Uri>(key).orEmpty()
 
-    private fun isArabic(): Boolean = Locale.getDefault().language == "ar"
-
     sealed interface StudioEvent {
-        data object Copied : StudioEvent
-        data object EmptyPrompt : StudioEvent
         data object ImportFailed : StudioEvent
         data object MaxImages : StudioEvent
         data object VisualRemoved : StudioEvent
-        data class LaunchPrepared(val boardUri: String?, val boardFailed: Boolean) : StudioEvent
+        data class BoardExported(val uri: String) : StudioEvent
+        data object BoardExportFailed : StudioEvent
     }
 
     private companion object {
         const val MAX_IMAGES = 5
-        const val MAX_GOAL_LENGTH = 1_600
         const val MAX_CAPTION_LENGTH = 120
     }
 }

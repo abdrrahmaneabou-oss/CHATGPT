@@ -722,7 +722,7 @@ private fun PortalDock(
                 ) {
                     Icon(Icons.Rounded.AutoAwesome, contentDescription = null, tint = Acid, modifier = Modifier.size(14.dp))
                     Text(
-                        text = pageTitle.ifBlank { stringResource(R.string.portal_capsule_ready) },
+                        text = pageTitle.ifBlank { stringResource(R.string.portal_direct_ready) },
                         modifier = Modifier.weight(1f),
                         color = Paper.copy(alpha = 0.72f),
                         fontSize = 11.sp,

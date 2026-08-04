@@ -1,11 +1,10 @@
 package app.aimode.studio.data
 
 import android.content.Context
+import android.graphics.BitmapFactory
+import android.media.ExifInterface
 import android.net.Uri
 import android.webkit.MimeTypeMap
-import app.aimode.studio.model.AnswerShape
-import app.aimode.studio.model.PrecisionControl
-import app.aimode.studio.model.ThinkingLens
 import app.aimode.studio.model.VisualAsset
 import app.aimode.studio.model.Workspace
 import java.io.File
@@ -35,6 +34,8 @@ class StudioRepository(private val context: Context) {
                                 id = item.getString("id"),
                                 localPath = path,
                                 caption = item.optString("caption"),
+                                width = item.optInt("width"),
+                                height = item.optInt("height"),
                             ),
                         )
                     }
@@ -44,12 +45,12 @@ class StudioRepository(private val context: Context) {
                 visuals.any { it.id == candidate }
             }
             Workspace(
-                goal = json.optString("goal"),
-                lens = enumValueOrDefault(json.optString("lens"), ThinkingLens.ANALYZE),
-                answerShape = enumValueOrDefault(json.optString("answerShape"), AnswerShape.BRIEF),
-                precision = enumSet(json.optJSONArray("precision"), PrecisionControl.entries)
-                    .ifEmpty { setOf(PrecisionControl.UNCERTAINTY, PrecisionControl.IMAGE_REFERENCES) },
-                visuals = visuals,
+                visuals = visuals.map { visual ->
+                    if (visual.width > 0 && visual.height > 0) visual
+                    else imageDimensions(File(visual.localPath))?.let { (width, height) ->
+                        visual.copy(width = width, height = height)
+                    } ?: visual
+                },
                 selectedVisualId = selectedId ?: visuals.firstOrNull()?.id,
             )
         }.getOrDefault(Workspace())
@@ -57,11 +58,7 @@ class StudioRepository(private val context: Context) {
 
     fun saveWorkspace(workspace: Workspace) {
         val json = JSONObject().apply {
-            put("goal", workspace.goal)
-            put("lens", workspace.lens.name)
-            put("answerShape", workspace.answerShape.name)
             put("selectedVisualId", workspace.selectedVisualId ?: "")
-            put("precision", JSONArray(workspace.precision.map { it.name }))
             put(
                 "visuals",
                 JSONArray().apply {
@@ -71,6 +68,8 @@ class StudioRepository(private val context: Context) {
                                 put("id", visual.id)
                                 put("path", visual.localPath)
                                 put("caption", visual.caption)
+                                put("width", visual.width)
+                                put("height", visual.height)
                             },
                         )
                     }
@@ -96,9 +95,12 @@ class StudioRepository(private val context: Context) {
                     FileOutputStream(requireNotNull(target)).use { output -> input.copyTo(output, DEFAULT_BUFFER_SIZE) }
                 }
                 require(requireNotNull(target).length() in 1..MAX_IMPORT_BYTES) { "Unsupported image size" }
+                val dimensions = requireNotNull(imageDimensions(requireNotNull(target))) { "Unreadable image" }
                 VisualAsset(
                     id = UUID.randomUUID().toString(),
                     localPath = requireNotNull(target).absolutePath,
+                    width = dimensions.first,
+                    height = dimensions.second,
                 )
             }
             result.onSuccess(imported::add).onFailure {
@@ -126,15 +128,17 @@ class StudioRepository(private val context: Context) {
             ?: "img"
     }
 
-    private inline fun <reified T : Enum<T>> enumValueOrDefault(value: String, fallback: T): T =
-        enumValues<T>().firstOrNull { it.name == value } ?: fallback
-
-    private fun <T : Enum<T>> enumSet(json: JSONArray?, entries: List<T>): Set<T> = buildSet {
-        if (json == null) return@buildSet
-        for (index in 0 until json.length()) {
-            val value = json.optString(index)
-            entries.firstOrNull { it.name == value }?.let(::add)
-        }
+    private fun imageDimensions(file: File): Pair<Int, Int>? {
+        val options = BitmapFactory.Options().apply { inJustDecodeBounds = true }
+        BitmapFactory.decodeFile(file.absolutePath, options)
+        if (options.outWidth <= 0 || options.outHeight <= 0) return null
+        val rotated = runCatching {
+            ExifInterface(file.absolutePath).getAttributeInt(
+                ExifInterface.TAG_ORIENTATION,
+                ExifInterface.ORIENTATION_NORMAL,
+            ) in setOf(ExifInterface.ORIENTATION_ROTATE_90, ExifInterface.ORIENTATION_ROTATE_270)
+        }.getOrDefault(false)
+        return if (rotated) options.outHeight to options.outWidth else options.outWidth to options.outHeight
     }
 
     data class ImportResult(val visuals: List<VisualAsset>, val failedCount: Int)

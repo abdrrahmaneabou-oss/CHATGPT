@@ -6,10 +6,12 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Canvas
 import android.graphics.Color
+import android.graphics.LinearGradient
 import android.graphics.Matrix
 import android.graphics.Paint
-import android.graphics.Rect
+import android.graphics.Path
 import android.graphics.RectF
+import android.graphics.Shader
 import android.graphics.Typeface
 import android.media.ExifInterface
 import android.media.MediaScannerConnection
@@ -20,236 +22,184 @@ import android.provider.MediaStore
 import android.text.Layout
 import android.text.StaticLayout
 import android.text.TextPaint
-import app.aimode.studio.model.ThinkingLens
+import app.aimode.studio.domain.MosaicImage
+import app.aimode.studio.domain.MosaicPlanner
+import app.aimode.studio.model.VisualAsset
 import app.aimode.studio.model.Workspace
 import java.io.File
 import java.io.FileOutputStream
 import java.io.OutputStream
 import kotlin.math.max
-import kotlin.math.min
+import kotlin.math.roundToInt
 
 class CollageExporter(private val context: Context) {
     fun export(workspace: Workspace, arabic: Boolean): Uri? {
-        if (workspace.visuals.isEmpty()) return null
-        val decoded = workspace.visuals.mapNotNull { visual ->
-            decodeScaled(File(visual.localPath), MAX_DECODE_SIDE)?.let { visual to it }
-        }
-        require(decoded.isNotEmpty()) { "No readable images" }
+        val sources = workspace.visuals.mapNotNull(::sourceFor)
+        if (sources.isEmpty()) return null
 
-        val board = renderBoard(workspace, decoded, arabic)
-        return try {
-            save(board)
+        val plan = MosaicPlanner.plan(
+            sources.map { source -> MosaicImage(source.visual.id, source.aspectRatio) },
+        )
+        val (boardWidth, boardHeight) = boardSize(plan.canvasAspectRatio)
+        val board = Bitmap.createBitmap(boardWidth, boardHeight, Bitmap.Config.ARGB_8888)
+        val canvas = Canvas(board)
+        canvas.drawColor(GAP_COLOR)
+        val sourceById = sources.associateBy { it.visual.id }
+
+        try {
+            plan.cells.forEachIndexed { index, cell ->
+                val source = sourceById.getValue(cell.imageId)
+                val destination = RectF(
+                    cell.left * boardWidth,
+                    cell.top * boardHeight,
+                    cell.right * boardWidth,
+                    cell.bottom * boardHeight,
+                )
+                val cellAspect = destination.width() / destination.height()
+                val requiredLongSide = when {
+                    source.aspectRatio >= cellAspect -> destination.height() * source.aspectRatio
+                    else -> destination.width() / source.aspectRatio
+                }.times(1.08f).roundToInt().coerceAtMost(MAX_DECODE_SIDE)
+                val bitmap = requireNotNull(decodeScaled(source.file, requiredLongSide)) {
+                    "Could not decode ${source.file.name}"
+                }
+                try {
+                    drawImageCell(
+                        canvas = canvas,
+                        bitmap = bitmap,
+                        destination = destination,
+                        number = index + 1,
+                        caption = source.visual.caption,
+                        arabic = arabic,
+                    )
+                } finally {
+                    if (!bitmap.isRecycled) bitmap.recycle()
+                }
+            }
+            drawWatermark(canvas, boardWidth, boardHeight)
+            return save(board)
         } finally {
-            decoded.forEach { (_, bitmap) -> if (!bitmap.isRecycled) bitmap.recycle() }
             board.recycle()
         }
     }
 
-    private fun renderBoard(
-        workspace: Workspace,
-        decoded: List<Pair<app.aimode.studio.model.VisualAsset, Bitmap>>,
-        arabic: Boolean,
-    ): Bitmap {
-        val output = Bitmap.createBitmap(BOARD_WIDTH, BOARD_HEIGHT, Bitmap.Config.ARGB_8888)
-        val canvas = Canvas(output)
-        val paint = Paint(Paint.ANTI_ALIAS_FLAG or Paint.FILTER_BITMAP_FLAG)
-        canvas.drawColor(PAPER)
-
-        paint.color = INK
-        canvas.drawRect(0f, 0f, BOARD_WIDTH.toFloat(), 18f, paint)
-        paint.color = SOLAR
-        canvas.drawRect(0f, 18f, BOARD_WIDTH * 0.34f, 34f, paint)
-
-        val brand = TextPaint(Paint.ANTI_ALIAS_FLAG).apply {
-            color = INK
-            textSize = 58f
-            typeface = Typeface.create("sans-serif", Typeface.BOLD)
-            letterSpacing = 0.08f
+    private fun sourceFor(visual: VisualAsset): ImageSource? {
+        val file = File(visual.localPath)
+        if (!file.isFile) return null
+        val dimensions = if (visual.width > 0 && visual.height > 0) {
+            visual.width to visual.height
+        } else {
+            imageDimensions(file) ?: return null
         }
-        canvas.drawText("AI MODE / CONTEXT BOARD", OUTER_GAP.toFloat(), 115f, brand)
-
-        val meta = TextPaint(Paint.ANTI_ALIAS_FLAG).apply {
-            color = MUTED
-            textSize = 28f
-            typeface = Typeface.create("sans-serif", Typeface.BOLD)
-        }
-        val lens = when (workspace.lens) {
-            ThinkingLens.ANALYZE -> if (arabic) "تحليل" else "ANALYZE"
-            ThinkingLens.COMPARE -> if (arabic) "مقارنة" else "COMPARE"
-            ThinkingLens.EXTRACT -> if (arabic) "استخراج" else "EXTRACT"
-            ThinkingLens.CREATE -> if (arabic) "ابتكار" else "CREATE"
-            ThinkingLens.SOLVE -> if (arabic) "حلّ" else "SOLVE"
-        }
-        canvas.drawText("$lens  •  ${decoded.size} VISUAL${if (decoded.size == 1) "" else "S"}", OUTER_GAP.toFloat(), 166f, meta)
-
-        val goalPaint = TextPaint(Paint.ANTI_ALIAS_FLAG).apply {
-            color = INK
-            textSize = 38f
-            typeface = Typeface.create("sans-serif", Typeface.NORMAL)
-        }
-        drawTextBlock(
-            canvas = canvas,
-            text = workspace.goal.trim().take(220),
-            paint = goalPaint,
-            left = OUTER_GAP,
-            top = 205,
-            width = BOARD_WIDTH - OUTER_GAP * 2,
-            maxLines = 2,
-            alignment = if (arabic) Layout.Alignment.ALIGN_OPPOSITE else Layout.Alignment.ALIGN_NORMAL,
+        return ImageSource(
+            visual = visual,
+            file = file,
+            aspectRatio = (dimensions.first.toFloat() / dimensions.second).coerceIn(0.08f, 12f),
         )
-
-        val cells = boardCells(decoded.size)
-        decoded.forEachIndexed { index, (visual, bitmap) ->
-            drawVisualCell(canvas, cells[index], bitmap, index + 1, visual.caption, arabic)
-        }
-
-        paint.color = INK
-        canvas.drawRect(0f, (BOARD_HEIGHT - FOOTER_HEIGHT).toFloat(), BOARD_WIDTH.toFloat(), BOARD_HEIGHT.toFloat(), paint)
-        val footer = TextPaint(Paint.ANTI_ALIAS_FLAG).apply {
-            color = Color.WHITE
-            textSize = 28f
-            typeface = Typeface.create("sans-serif", Typeface.BOLD)
-            letterSpacing = 0.06f
-            textAlign = Paint.Align.CENTER
-        }
-        canvas.drawText(
-            if (arabic) "جُهّز محليًا • استخدم أرقام الصور داخل المحادثة" else "PREPARED LOCALLY • CITE IMAGES BY NUMBER",
-            BOARD_WIDTH / 2f,
-            BOARD_HEIGHT - 47f,
-            footer,
-        )
-        return output
     }
 
-    private fun drawVisualCell(
+    private fun drawImageCell(
         canvas: Canvas,
-        cell: RectF,
         bitmap: Bitmap,
+        destination: RectF,
         number: Int,
         caption: String,
         arabic: Boolean,
     ) {
-        val paint = Paint(Paint.ANTI_ALIAS_FLAG or Paint.FILTER_BITMAP_FLAG)
-        paint.color = Color.WHITE
-        canvas.drawRoundRect(cell, 34f, 34f, paint)
-
-        paint.style = Paint.Style.STROKE
-        paint.strokeWidth = 3f
-        paint.color = BORDER
-        canvas.drawRoundRect(cell, 34f, 34f, paint)
-        paint.style = Paint.Style.FILL
-
-        val captionHeight = if (caption.isBlank()) 0f else 112f
-        val imageArea = RectF(
-            cell.left + 18f,
-            cell.top + 18f,
-            cell.right - 18f,
-            cell.bottom - 18f - captionHeight,
+        val shortest = minOf(destination.width(), destination.height())
+        val radius = (shortest * 0.035f).coerceIn(18f, 48f)
+        val clipPath = Path().apply { addRoundRect(destination, radius, radius, Path.Direction.CW) }
+        val paint = Paint(Paint.ANTI_ALIAS_FLAG or Paint.FILTER_BITMAP_FLAG or Paint.DITHER_FLAG)
+        val scale = max(destination.width() / bitmap.width, destination.height() / bitmap.height)
+        val renderedWidth = bitmap.width * scale
+        val renderedHeight = bitmap.height * scale
+        val rendered = RectF(
+            destination.centerX() - renderedWidth / 2f,
+            destination.centerY() - renderedHeight / 2f,
+            destination.centerX() + renderedWidth / 2f,
+            destination.centerY() + renderedHeight / 2f,
         )
-        paint.color = Color.rgb(232, 229, 221)
-        canvas.drawRoundRect(imageArea, 24f, 24f, paint)
 
-        val scale = min(imageArea.width() / bitmap.width, imageArea.height() / bitmap.height)
-        val width = max(1, (bitmap.width * scale).toInt())
-        val height = max(1, (bitmap.height * scale).toInt())
-        val left = (imageArea.left + (imageArea.width() - width) / 2f).toInt()
-        val top = (imageArea.top + (imageArea.height() - height) / 2f).toInt()
-        canvas.drawBitmap(bitmap, null, Rect(left, top, left + width, top + height), paint)
-
-        paint.color = INK
-        canvas.drawCircle(cell.left + 62f, cell.top + 62f, 37f, paint)
-        paint.color = ACID
-        paint.textSize = 34f
-        paint.textAlign = Paint.Align.CENTER
-        paint.typeface = Typeface.create("sans-serif", Typeface.BOLD)
-        canvas.drawText(number.toString(), cell.left + 62f, cell.top + 74f, paint)
+        canvas.save()
+        canvas.clipPath(clipPath)
+        canvas.drawBitmap(bitmap, null, rendered, paint)
 
         if (caption.isNotBlank()) {
-            val textPaint = TextPaint(Paint.ANTI_ALIAS_FLAG).apply {
-                color = INK
-                textSize = 30f
-                typeface = Typeface.create("sans-serif", Typeface.BOLD)
-            }
-            drawTextBlock(
-                canvas = canvas,
-                text = caption.trim(),
-                paint = textPaint,
-                left = (cell.left + 28f).toInt(),
-                top = (cell.bottom - captionHeight + 18f).toInt(),
-                width = (cell.width() - 56f).toInt(),
-                maxLines = 2,
-                alignment = if (arabic) Layout.Alignment.ALIGN_OPPOSITE else Layout.Alignment.ALIGN_NORMAL,
+            val overlayHeight = (destination.height() * 0.25f).coerceIn(150f, 330f)
+            paint.shader = LinearGradient(
+                0f,
+                destination.bottom - overlayHeight,
+                0f,
+                destination.bottom,
+                Color.TRANSPARENT,
+                Color.argb(220, 10, 11, 13),
+                Shader.TileMode.CLAMP,
             )
+            canvas.drawRect(
+                destination.left,
+                destination.bottom - overlayHeight,
+                destination.right,
+                destination.bottom,
+                paint,
+            )
+            paint.shader = null
+            drawCaption(canvas, destination, caption, arabic)
         }
+
+        val badgeRadius = (shortest * 0.065f).coerceIn(38f, 62f)
+        val badgeX = destination.left + badgeRadius + 24f
+        val badgeY = destination.top + badgeRadius + 24f
+        paint.color = Color.argb(226, 21, 20, 17)
+        canvas.drawCircle(badgeX, badgeY, badgeRadius, paint)
+        paint.color = ACID
+        paint.textAlign = Paint.Align.CENTER
+        paint.textSize = badgeRadius * 0.92f
+        paint.typeface = Typeface.create("sans-serif", Typeface.BOLD)
+        canvas.drawText(number.toString(), badgeX, badgeY + badgeRadius * 0.34f, paint)
+        canvas.restore()
     }
 
-    private fun boardCells(count: Int): List<RectF> {
-        val left = OUTER_GAP.toFloat()
-        val right = (BOARD_WIDTH - OUTER_GAP).toFloat()
-        val top = CONTENT_TOP.toFloat()
-        val bottom = (BOARD_HEIGHT - FOOTER_HEIGHT - OUTER_GAP).toFloat()
-        val gap = CELL_GAP.toFloat()
-        val midX = (left + right) / 2f
-        val midY = (top + bottom) / 2f
-        return when (count) {
-            1 -> listOf(RectF(left, top, right, bottom))
-            2 -> listOf(
-                RectF(left, top, midX - gap / 2f, bottom),
-                RectF(midX + gap / 2f, top, right, bottom),
-            )
-            3 -> listOf(
-                RectF(left, top, right, midY - gap / 2f),
-                RectF(left, midY + gap / 2f, midX - gap / 2f, bottom),
-                RectF(midX + gap / 2f, midY + gap / 2f, right, bottom),
-            )
-            4 -> gridFour(left, top, right, bottom, gap)
-            else -> {
-                val heroBottom = top + (bottom - top) * 0.38f
-                listOf(RectF(left, top, right, heroBottom)) +
-                    gridFour(left, heroBottom + gap, right, bottom, gap)
-            }
+    private fun drawCaption(canvas: Canvas, destination: RectF, caption: String, arabic: Boolean) {
+        val horizontalPadding = (destination.width() * 0.045f).coerceIn(34f, 64f)
+        val textPaint = TextPaint(Paint.ANTI_ALIAS_FLAG).apply {
+            color = Color.WHITE
+            textSize = (minOf(destination.width(), destination.height()) * 0.07f).coerceIn(36f, 58f)
+            typeface = Typeface.create("sans-serif", Typeface.BOLD)
         }
-    }
-
-    private fun gridFour(left: Float, top: Float, right: Float, bottom: Float, gap: Float): List<RectF> {
-        val midX = (left + right) / 2f
-        val midY = (top + bottom) / 2f
-        return listOf(
-            RectF(left, top, midX - gap / 2f, midY - gap / 2f),
-            RectF(midX + gap / 2f, top, right, midY - gap / 2f),
-            RectF(left, midY + gap / 2f, midX - gap / 2f, bottom),
-            RectF(midX + gap / 2f, midY + gap / 2f, right, bottom),
-        )
-    }
-
-    private fun drawTextBlock(
-        canvas: Canvas,
-        text: String,
-        paint: TextPaint,
-        left: Int,
-        top: Int,
-        width: Int,
-        maxLines: Int,
-        alignment: Layout.Alignment,
-    ) {
-        val layout = StaticLayout.Builder.obtain(text, 0, text.length, paint, width)
-            .setAlignment(alignment)
+        val width = (destination.width() - horizontalPadding * 2f).roundToInt().coerceAtLeast(1)
+        val layout = StaticLayout.Builder.obtain(caption.trim(), 0, caption.trim().length, textPaint, width)
+            .setAlignment(if (arabic) Layout.Alignment.ALIGN_OPPOSITE else Layout.Alignment.ALIGN_NORMAL)
             .setIncludePad(false)
-            .setMaxLines(maxLines)
+            .setMaxLines(2)
             .setEllipsize(android.text.TextUtils.TruncateAt.END)
             .build()
         canvas.save()
-        canvas.translate(left.toFloat(), top.toFloat())
+        canvas.translate(
+            destination.left + horizontalPadding,
+            destination.bottom - layout.height - horizontalPadding,
+        )
         layout.draw(canvas)
         canvas.restore()
     }
 
-    private fun decodeScaled(file: File, maxSide: Int): Bitmap? {
+    private fun drawWatermark(canvas: Canvas, width: Int, height: Int) {
+        val textPaint = TextPaint(Paint.ANTI_ALIAS_FLAG).apply {
+            color = Color.argb(212, 255, 255, 255)
+            textSize = (minOf(width, height) * 0.018f).coerceIn(38f, 54f)
+            typeface = Typeface.create("sans-serif", Typeface.BOLD)
+            letterSpacing = 0.08f
+            textAlign = Paint.Align.RIGHT
+            setShadowLayer(10f, 0f, 3f, Color.argb(170, 0, 0, 0))
+        }
+        canvas.drawText("AI MODE  •  HD MOSAIC", width - 34f, height - 34f, textPaint)
+    }
+
+    private fun decodeScaled(file: File, targetLongSide: Int): Bitmap? {
         val bounds = BitmapFactory.Options().apply { inJustDecodeBounds = true }
         BitmapFactory.decodeFile(file.absolutePath, bounds)
         if (bounds.outWidth <= 0 || bounds.outHeight <= 0) return null
         var sample = 1
-        while (max(bounds.outWidth, bounds.outHeight) / (sample * 2) >= maxSide) sample *= 2
+        while (max(bounds.outWidth, bounds.outHeight) / (sample * 2) >= targetLongSide) sample *= 2
         val bitmap = BitmapFactory.decodeFile(
             file.absolutePath,
             BitmapFactory.Options().apply {
@@ -258,22 +208,52 @@ class CollageExporter(private val context: Context) {
             },
         ) ?: return null
 
-        val rotation = runCatching {
-            when (ExifInterface(file.absolutePath).getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL)) {
-                ExifInterface.ORIENTATION_ROTATE_90 -> 90f
-                ExifInterface.ORIENTATION_ROTATE_180 -> 180f
-                ExifInterface.ORIENTATION_ROTATE_270 -> 270f
-                else -> 0f
-            }
-        }.getOrDefault(0f)
+        val rotation = rotationFor(file)
         if (rotation == 0f) return bitmap
-        val rotated = Bitmap.createBitmap(bitmap, 0, 0, bitmap.width, bitmap.height, Matrix().apply { postRotate(rotation) }, true)
-        bitmap.recycle()
-        return rotated
+        return Bitmap.createBitmap(
+            bitmap,
+            0,
+            0,
+            bitmap.width,
+            bitmap.height,
+            Matrix().apply { postRotate(rotation) },
+            true,
+        ).also { rotated -> if (rotated !== bitmap) bitmap.recycle() }
+    }
+
+    private fun imageDimensions(file: File): Pair<Int, Int>? {
+        val bounds = BitmapFactory.Options().apply { inJustDecodeBounds = true }
+        BitmapFactory.decodeFile(file.absolutePath, bounds)
+        if (bounds.outWidth <= 0 || bounds.outHeight <= 0) return null
+        return if (rotationFor(file) in setOf(90f, 270f)) {
+            bounds.outHeight to bounds.outWidth
+        } else {
+            bounds.outWidth to bounds.outHeight
+        }
+    }
+
+    private fun rotationFor(file: File): Float = runCatching {
+        when (
+            ExifInterface(file.absolutePath).getAttributeInt(
+                ExifInterface.TAG_ORIENTATION,
+                ExifInterface.ORIENTATION_NORMAL,
+            )
+        ) {
+            ExifInterface.ORIENTATION_ROTATE_90 -> 90f
+            ExifInterface.ORIENTATION_ROTATE_180 -> 180f
+            ExifInterface.ORIENTATION_ROTATE_270 -> 270f
+            else -> 0f
+        }
+    }.getOrDefault(0f)
+
+    private fun boardSize(aspectRatio: Float): Pair<Int, Int> = if (aspectRatio <= 1f) {
+        (OUTPUT_LONG_EDGE * aspectRatio).roundToInt() to OUTPUT_LONG_EDGE
+    } else {
+        OUTPUT_LONG_EDGE to (OUTPUT_LONG_EDGE / aspectRatio).roundToInt()
     }
 
     private fun save(bitmap: Bitmap): Uri {
-        val name = "AI_Mode_Context_${System.currentTimeMillis()}.jpg"
+        val name = "AI_Mode_HD_Mosaic_${System.currentTimeMillis()}.jpg"
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             val values = ContentValues().apply {
                 put(MediaStore.Images.Media.DISPLAY_NAME, name)
@@ -310,22 +290,22 @@ class CollageExporter(private val context: Context) {
 
     private fun write(bitmap: Bitmap, stream: OutputStream?) {
         requireNotNull(stream) { "Could not open output stream" }
-        require(bitmap.compress(Bitmap.CompressFormat.JPEG, 94, stream)) { "Could not encode board" }
+        require(bitmap.compress(Bitmap.CompressFormat.JPEG, JPEG_QUALITY, stream)) {
+            "Could not encode mosaic"
+        }
     }
 
+    private data class ImageSource(
+        val visual: VisualAsset,
+        val file: File,
+        val aspectRatio: Float,
+    )
+
     private companion object {
-        const val BOARD_WIDTH = 1800
-        const val BOARD_HEIGHT = 2200
-        const val CONTENT_TOP = 390
-        const val FOOTER_HEIGHT = 110
-        const val OUTER_GAP = 46
-        const val CELL_GAP = 30
-        const val MAX_DECODE_SIDE = 1800
-        val PAPER = Color.rgb(245, 241, 232)
-        val INK = Color.rgb(21, 20, 17)
-        val MUTED = Color.rgb(103, 99, 90)
-        val SOLAR = Color.rgb(255, 91, 53)
+        const val OUTPUT_LONG_EDGE = 3_200
+        const val MAX_DECODE_SIDE = 4_200
+        const val JPEG_QUALITY = 98
+        val GAP_COLOR = Color.rgb(12, 13, 15)
         val ACID = Color.rgb(200, 255, 99)
-        val BORDER = Color.rgb(205, 199, 187)
     }
 }

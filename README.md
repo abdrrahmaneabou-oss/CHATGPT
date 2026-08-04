@@ -1,21 +1,25 @@
-# AI Mode 2.1 — Context OS Portal
+# AI Mode 2.1.1 — Visual OS
 
-AI Mode is no longer a long form followed by a browser button. It is a focused Android context workspace: define the outcome, sequence visual evidence, choose how the problem should be approached, and launch one precise context capsule into [Google AI Mode](https://www.google.com/ai).
+AI Mode is an Android image studio wrapped around a living in-app Google AI Portal. The two paths are deliberately independent: the portal opens immediately, while the optional image studio collects and merges up to five images into a high-quality adaptive mosaic.
 
-## The product idea
+There is no message composer, prompt compiler, readiness gate, answer-shape selector, automatic clipboard write, or generated text handoff.
 
-Most AI interfaces begin with an empty box. Context OS begins with intent.
+## The experience
 
-- **Thinking lenses** reshape the request for analysis, comparison, extraction, creation, or problem solving.
-- **Visual storyline** imports up to five images into private app storage, numbers them, lets the user reorder them, and assigns each one a role.
-- **Context pulse** scores prompt readiness locally and points to the single most useful next action.
-- **Precision controls** add explicit uncertainty, image citations, and clarify-before-assuming behavior.
-- **One-tap launch capsule** compiles and copies the prompt, creates a numbered visual board locally, then morphs the launch capsule into an in-app AI Portal.
-- **Living portal session** keeps Google AI Mode mounted while the portal is minimized, so the Context OS workspace and the active AI session can coexist without a reload.
-- **Purpose-built browser chrome** provides back, forward, reload, close, minimize, secure-origin status, file upload, camera/microphone mediation, and an explicit external-browser escape hatch.
-- **Adaptive workspace** becomes a two-pane command center on tablets and large screens while staying thumb-friendly on phones.
+- **Direct AI Portal** opens from an empty workspace with one tap. Nothing is generated or copied first.
+- **Living portal session** remains mounted while minimized, so Google AI and the image studio can coexist without a reload.
+- **Visual studio** imports up to five images into private app storage, reorders them, and adds an optional label that belongs only to its image.
+- **Shared smart layout** drives both the live Compose preview and the exported bitmap, so the result is visible before export.
+- **Adaptive mosaic planner** compares image aspect ratios against multiple portrait, square, and landscape layouts, then chooses the layout with the lowest crop loss.
+- **Space-filling output** uses the entire frame for one to five images, including side-by-side portraits, stacked landscapes, hero grids, 2×2 grids, and balanced 2+3 arrangements.
+- **High-quality renderer** exports a 3200 px long edge at JPEG quality 98, decodes each source for its actual cell size, applies EXIF rotation, and renders images sequentially to control memory use.
+- **Purpose-built browser chrome** provides close, minimize, secure-origin status, back, forward, reload, loading progress, file upload, camera/microphone mediation, and an external-browser escape hatch.
 
-Nothing in the preparation flow is sent to an app server. Google content is rendered by Android System WebView directly from its HTTPS origin; the app does not inject JavaScript, inspect cookies, or proxy Google traffic. An external Custom Tab remains available when a Google flow requires the user's full browser.
+## Privacy
+
+Imported image copies, ordering, labels, previews, and mosaic rendering stay on-device. Export is an explicit action and opening the AI Portal never exports an image.
+
+Google content is rendered by Android System WebView directly from its HTTPS origin. The app does not inject JavaScript, expose a JavaScript bridge, inspect cookies or page content, imitate Google sign-in, or proxy traffic.
 
 ## Technology
 
@@ -23,10 +27,9 @@ Nothing in the preparation flow is sent to an app server. Google content is rend
 - Jetpack Compose BOM 2026.06.01 and Material 3
 - Activity Compose 1.13.0 and Lifecycle 2.11.0
 - Android System WebView for the embedded portal and AndroidX Browser 1.10.0 for the external fallback
-- Android 17 / API 37 target with Platform 37.0 and Build Tools 37.0.0, Android 8+ support
-- Deterministic local prompt compiler, private file imports, and MediaStore export
-
-The versions are intentionally pinned so CI and local builds are reproducible.
+- Android 17 / API 37 target with Android 8+ support
+- Pure Kotlin mosaic planner with deterministic layout tests
+- MediaStore HD export and private local image imports
 
 ## Build
 
@@ -36,17 +39,15 @@ Use JDK 17 and Android SDK 37:
 ./gradlew testDebugUnitTest lintDebug assembleDebug
 ```
 
-The debug APK is written to `app/build/outputs/apk/debug/app-debug.apk`. Every pull request runs the same quality gate and uploads the APK as a workflow artifact.
+The debug APK is written to `app/build/outputs/apk/debug/app-debug.apk`. Every pull request runs the same quality gate and uploads the APK plus lint reports as a workflow artifact.
 
 ## Architecture
 
 ```text
-UI (adaptive Compose workspace)
+UI (adaptive Compose Visual OS)
   ├─ AI Portal (morphing WebView surface + browser controls)
-  ├─ StudioViewModel (state, share intents, launch orchestration)
-  ├─ PromptEngine (pure deterministic context compiler + readiness)
-  ├─ StudioRepository (private imports + persisted workspace)
-  └─ CollageExporter (numbered local context board + MediaStore)
+  ├─ StudioViewModel (image state, imports, ordering, export)
+  ├─ MosaicPlanner (shared aspect-aware layout selection)
+  ├─ StudioRepository (private image copies + metadata)
+  └─ CollageExporter (3200 px sequential HD renderer + MediaStore)
 ```
-
-The core handoff remains intentionally narrow: the app prepares and copies context, while Google AI Mode stays on Google's HTTPS origin inside the system WebView. The portal never reads page content or cookies, and the user can move the current URL to a browser-owned Custom Tab at any time.
