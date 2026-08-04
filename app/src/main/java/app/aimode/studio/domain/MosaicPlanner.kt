@@ -38,6 +38,7 @@ object MosaicPlanner {
         return canvasAspects
             .flatMap { canvasAspect -> candidates(images, canvasAspect) }
             .minBy(::cropScore)
+            .plan
     }
 
     private fun candidates(images: List<MosaicImage>, canvasAspect: Float): List<Candidate> {
