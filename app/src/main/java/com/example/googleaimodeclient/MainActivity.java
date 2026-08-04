@@ -31,6 +31,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.activity.OnBackPressedCallback;
 import androidx.core.content.ContextCompat;
 
 import java.io.File;
@@ -73,6 +74,14 @@ public class MainActivity extends AppCompatActivity {
 
         aiPortal = new AiPortalController(this, openAiMode, prompt, savedInstanceState);
         openAiMode.setOnClickListener(aiPortal::open);
+        getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                if (aiPortal != null && aiPortal.handleBackPressed()) return;
+                setEnabled(false);
+                getOnBackPressedDispatcher().onBackPressed();
+            }
+        });
         pickImages.setOnClickListener(view -> launchImagePicker());
         clearImages.setOnClickListener(view -> {
             selectedImages.clear();
@@ -412,12 +421,6 @@ public class MainActivity extends AppCompatActivity {
     protected void onSaveInstanceState(Bundle outState) {
         if (aiPortal != null) aiPortal.saveState(outState);
         super.onSaveInstanceState(outState);
-    }
-
-    @Override
-    public void onBackPressed() {
-        if (aiPortal != null && aiPortal.handleBackPressed()) return;
-        super.onBackPressed();
     }
 
     @Override
