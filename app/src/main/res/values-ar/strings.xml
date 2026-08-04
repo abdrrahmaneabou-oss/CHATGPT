@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">AI Mode</string>
+    <string name="brand_kicker">نظام الصور</string>
+    <string name="privacy_local">على جهازك</string>
+
+    <string name="hero_title">صورك.\nإطار واحد ذكي.</string>
+    <string name="hero_body">اجمع من صورة إلى خمس صور، رتّبها بصريًا، وصدّر موزاييك HD يملأ الإطار. تبقى بوابة Google AI على بُعد ضغطة واحدة دائمًا.</string>
+    <string name="image_count">%1$d / %2$d صور</string>
+    <string name="hd_output_badge">3200 بكسل · JPEG 98</string>
+
+    <string name="visuals_title">لوحة الصور الذكية</string>
+    <string name="visuals_subtitle">أضف ورتّب حتى خمس صور. هذه المعاينة تستخدم التخطيط التكيفي نفسه الذي سيظهر في تصدير HD.</string>
+    <string name="add_visuals">إضافة صور</string>
+    <string name="empty_board_title">ابنِ لوحة صورك</string>
+    <string name="empty_board_body">اختر حتى خمس صور. سيتكيف الموزاييك تلقائيًا مع عددها ونِسَب أبعادها.</string>
+    <string name="image_number">الصورة %1$d</string>
+    <string name="image_dimensions">%1$d × %2$d بكسل</string>
+    <string name="image_order">ترتيب الصور</string>
+    <string name="image_label">عنوان الصورة (اختياري)</string>
+    <string name="image_label_hint">عنوان قصير يظهر فوق هذه الصورة</string>
+    <string name="image_label_note">هذا العنوان يخص الصورة فقط؛ لا يُنسخ ولا يُرسل.</string>
+    <string name="move_earlier">تحريك الصورة إلى البداية</string>
+    <string name="move_later">تحريك الصورة إلى النهاية</string>
+    <string name="remove_image">إزالة الصورة</string>
+    <string name="undo">تراجع</string>
+
+    <string name="export_hd_board">تصدير موزاييك HD</string>
+    <string name="exporting_board">جارٍ رسم موزاييك HD…</string>
+    <string name="export_quality_note">تخطيط تكيفي · ضلع طويل 3200 بكسل · JPEG ‏98/100 · أقل قص ممكن</string>
+    <string name="hd_mosaic_title">موزاييك HD ذكي</string>
+    <string name="hd_mosaic_body">يقارن المحرك نِسَب الصور، ويختار أوضح تخطيط، ويستغل كامل الإطار، ثم يرسمه بدقة عالية.</string>
+    <string name="board_saved">حُفظ موزاييك HD داخل Pictures/AI Mode.</string>
+    <string name="share_board">مشاركة موزاييك HD</string>
+    <string name="storage_denied">إذن التخزين مطلوب فقط لحفظ موزاييك HD.</string>
+    <string name="export_failed">تعذّر إنشاء موزاييك HD.</string>
+
+    <string name="direct_portal_title">Google AI بضغطة واحدة.</string>
+    <string name="direct_portal_body">البوابة مستقلة تمامًا عن استوديو الصور. افتحها متى أردت، حتى إن كانت اللوحة فارغة بالكامل.</string>
+    <string name="launch_title">بوابة الذكاء جاهزة</string>
+    <string name="launch_subtitle">جلسة مباشرة · افتحها في أي وقت</string>
+    <string name="launch_action">فتح بوابة الذكاء</string>
+
+    <string name="reset_workspace">مسح استوديو الصور</string>
+    <string name="reset_title">إزالة جميع الصور؟</string>
+    <string name="reset_body">ستُحذف النسخ الخاصة التي استوردتها إلى استوديو الصور من هذا الجهاز.</string>
+    <string name="cancel">إلغاء</string>
+    <string name="clear">إزالة الكل</string>
+    <string name="import_failed">تعذّر استيراد بعض الصور.</string>
+    <string name="max_images">يمكنك استخدام خمس صور كحد أقصى.</string>
+    <string name="open_failed">لا يوجد متصفح متوافق لفتح هذه الصفحة.</string>
+
+    <string name="portal_title">بوابة الذكاء</string>
+    <string name="portal_address">google.com</string>
+    <string name="portal_secure">آمن</string>
+    <string name="portal_direct_ready">جلسة Google AI مباشرة</string>
+    <string name="portal_session_alive">الجلسة ما زالت حية · اضغط للعودة</string>
+    <string name="portal_close">إغلاق بوابة الذكاء</string>
+    <string name="portal_minimize">تصغير بوابة الذكاء</string>
+    <string name="portal_restore">العودة إلى بوابة الذكاء</string>
+    <string name="portal_external">فتح في المتصفح</string>
+    <string name="portal_back">رجوع</string>
+    <string name="portal_forward">تقدّم</string>
+    <string name="portal_reload">إعادة تحميل الصفحة</string>
+    <string name="portal_error_title">تعذّر اتصال البوابة</string>
+    <string name="portal_error_body">تحقق من اتصالك وحاول مجددًا، أو أكمل داخل متصفحك.</string>
+    <string name="portal_retry">حاول مجددًا</string>
+</resources>

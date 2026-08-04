@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">AI Mode</string>
+    <string name="brand_kicker">VISUAL OS</string>
+    <string name="privacy_local">On-device</string>
+
+    <string name="hero_title">Your images.\nOne intelligent frame.</string>
+    <string name="hero_body">Collect one to five images, arrange them visually, and export a space-filling HD mosaic. The Google AI Portal remains one tap away at all times.</string>
+    <string name="image_count">%1$d / %2$d IMAGES</string>
+    <string name="hd_output_badge">3200 PX · JPEG 98</string>
+
+    <string name="visuals_title">Smart image board</string>
+    <string name="visuals_subtitle">Add and reorder up to five images. This live preview uses the same adaptive layout as the HD export.</string>
+    <string name="add_visuals">Add images</string>
+    <string name="empty_board_title">Build your visual board</string>
+    <string name="empty_board_body">Choose up to five images. The mosaic will adapt automatically to their number and proportions.</string>
+    <string name="image_number">Image %1$d</string>
+    <string name="image_dimensions">%1$d × %2$d px</string>
+    <string name="image_order">Image order</string>
+    <string name="image_label">Image label (optional)</string>
+    <string name="image_label_hint">A short label displayed on this image</string>
+    <string name="image_label_note">This belongs to the image only. It is never copied or sent.</string>
+    <string name="move_earlier">Move image earlier</string>
+    <string name="move_later">Move image later</string>
+    <string name="remove_image">Remove image</string>
+    <string name="undo">Undo</string>
+
+    <string name="export_hd_board">Export HD mosaic</string>
+    <string name="exporting_board">Rendering HD mosaic…</string>
+    <string name="export_quality_note">Adaptive layout · 3200 px long edge · JPEG 98/100 · minimal-crop rendering</string>
+    <string name="hd_mosaic_title">Smart HD mosaic</string>
+    <string name="hd_mosaic_body">The engine compares image proportions, chooses the clearest layout, fills every part of the frame, and renders at high resolution.</string>
+    <string name="board_saved">HD mosaic saved in Pictures/AI Mode.</string>
+    <string name="share_board">Share HD mosaic</string>
+    <string name="storage_denied">Storage permission is required only to save the HD mosaic.</string>
+    <string name="export_failed">The HD mosaic could not be created.</string>
+
+    <string name="direct_portal_title">Google AI. One tap away.</string>
+    <string name="direct_portal_body">The portal is independent from the image studio. Open it whenever you want, even when the board is completely empty.</string>
+    <string name="launch_title">AI Portal is ready</string>
+    <string name="launch_subtitle">Direct session · open at any time</string>
+    <string name="launch_action">Open AI Portal</string>
+
+    <string name="reset_workspace">Clear image studio</string>
+    <string name="reset_title">Remove all images?</string>
+    <string name="reset_body">The private copies imported into this image studio will be removed from this device.</string>
+    <string name="cancel">Cancel</string>
+    <string name="clear">Remove all</string>
+    <string name="import_failed">Some images could not be imported.</string>
+    <string name="max_images">You can use up to five images.</string>
+    <string name="open_failed">No compatible browser could open this page.</string>
+
+    <string name="portal_title">AI Portal</string>
+    <string name="portal_address">google.com</string>
+    <string name="portal_secure">SECURE</string>
+    <string name="portal_direct_ready">Direct Google AI session</string>
+    <string name="portal_session_alive">Session stays alive · tap to return</string>
+    <string name="portal_close">Close AI Portal</string>
+    <string name="portal_minimize">Minimize AI Portal</string>
+    <string name="portal_restore">Return to AI Portal</string>
+    <string name="portal_external">Open in browser</string>
+    <string name="portal_back">Go back</string>
+    <string name="portal_forward">Go forward</string>
+    <string name="portal_reload">Reload page</string>
+    <string name="portal_error_title">The portal could not connect</string>
+    <string name="portal_error_body">Check your connection and try again, or continue in your browser.</string>
+    <string name="portal_retry">Try again</string>
+</resources>
