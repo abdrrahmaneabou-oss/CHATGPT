@@ -44,8 +44,6 @@ class MainActivity : ComponentActivity() {
     }
 
     private fun openAiMode() {
-        val screenHeight = resources.displayMetrics.heightPixels
-        val initialHeight = maxOf(screenHeight / 2, (screenHeight * 0.76f).toInt())
         val colorScheme = CustomTabColorSchemeParams.Builder()
             .setToolbarColor(Color.rgb(21, 20, 17))
             .setNavigationBarColor(Color.rgb(12, 13, 15))
@@ -53,16 +51,9 @@ class MainActivity : ComponentActivity() {
             .build()
         try {
             CustomTabsIntent.Builder()
-                .setInitialActivityHeightPx(initialHeight, CustomTabsIntent.ACTIVITY_HEIGHT_ADJUSTABLE)
                 .setDefaultColorSchemeParams(colorScheme)
                 .setColorScheme(CustomTabsIntent.COLOR_SCHEME_SYSTEM)
-                .setToolbarCornerRadiusDp(24)
                 .setCloseButtonPosition(CustomTabsIntent.CLOSE_BUTTON_POSITION_END)
-                .setBackgroundInteractionEnabled(true)
-                .setActivitySideSheetBreakpointDp(760)
-                .setActivitySideSheetMaximizationEnabled(true)
-                .setActivitySideSheetPosition(CustomTabsIntent.ACTIVITY_SIDE_SHEET_POSITION_END)
-                .setActivitySideSheetDecorationType(CustomTabsIntent.ACTIVITY_SIDE_SHEET_DECORATION_TYPE_SHADOW)
                 .setShowTitle(false)
                 .setUrlBarHidingEnabled(true)
                 .setShareState(CustomTabsIntent.SHARE_STATE_ON)
