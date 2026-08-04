@@ -130,7 +130,6 @@ import app.aimode.studio.ui.theme.Ink
 import app.aimode.studio.ui.theme.Iris
 import app.aimode.studio.ui.theme.Solar
 import java.io.File
-import java.util.Locale
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -144,7 +143,7 @@ fun StudioScreen(
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     val workspace = state.workspace
-    val isArabic = LocalLayoutDirection.current == LayoutDirection.Rtl || Locale.getDefault().language == "ar"
+    val isArabic = LocalLayoutDirection.current == LayoutDirection.Rtl
     val prompt = remember(workspace, isArabic) { PromptEngine.compile(workspace, isArabic) }
     val readiness = remember(workspace) { PromptEngine.readiness(workspace) }
     val context = LocalContext.current
