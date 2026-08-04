@@ -533,8 +533,8 @@ public final class MainActivity extends AppCompatActivity {
         Intent share = new Intent(Intent.ACTION_SEND)
                 .setType("image/jpeg")
                 .putExtra(Intent.EXTRA_STREAM, lastBoardUri)
-                .setClipData(ClipData.newRawUri("AI Mode board", lastBoardUri))
                 .addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+        share.setClipData(ClipData.newRawUri("AI Mode board", lastBoardUri));
         try {
             startActivity(Intent.createChooser(share, getString(R.string.share_board_chooser)));
         } catch (RuntimeException error) {

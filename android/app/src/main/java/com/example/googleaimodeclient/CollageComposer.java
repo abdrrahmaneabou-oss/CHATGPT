@@ -102,7 +102,7 @@ final class CollageComposer {
         countPaint.setColor(ACCENT);
         countPaint.setTextSize(Math.max(26f, layout.headerHeight * 0.34f));
         countPaint.setTypeface(android.graphics.Typeface.create("sans-serif-black", android.graphics.Typeface.NORMAL));
-        countPaint.setTextAlign(Paint.Align.END);
+        countPaint.setTextAlign(Paint.Align.RIGHT);
         canvas.drawText(String.format(Locale.US, "%02d", layout.count), layout.width - layout.gap, baseline, countPaint);
     }
 
