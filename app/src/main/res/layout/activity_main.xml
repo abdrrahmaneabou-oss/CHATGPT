@@ -1,0 +1,989 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/studioRoot"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/studio_bg_app"
+    android:clipChildren="false"
+    android:clipToPadding="false">
+
+    <ScrollView
+        android:id="@+id/studioScroll"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:clipToPadding="false"
+        android:fillViewport="true"
+        android:layoutDirection="rtl"
+        android:overScrollMode="never">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingLeft="18dp"
+        android:paddingTop="18dp"
+        android:paddingRight="18dp"
+        android:paddingBottom="28dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/studio_bg_hero"
+            android:elevation="10dp"
+            android:orientation="vertical"
+            android:padding="22dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <FrameLayout
+                    android:layout_width="52dp"
+                    android:layout_height="52dp"
+                    android:background="@drawable/studio_bg_brand_orb"
+                    android:elevation="8dp">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:gravity="center"
+                        android:text="✦"
+                        android:textColor="#FFFFFFFF"
+                        android:textSize="25sp"
+                        android:textStyle="bold" />
+                </FrameLayout>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="12dp"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="sans-serif-medium"
+                        android:letterSpacing="0.14"
+                        android:text="AI MODE STUDIO"
+                        android:textColor="#FFD7DEFF"
+                        android:textSize="12sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="3dp"
+                        android:text="مساحتك الذكية للإبداع"
+                        android:textColor="#FF98A5CA"
+                        android:textSize="13sp" />
+                </LinearLayout>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="34dp"
+                    android:background="@drawable/studio_bg_live_badge"
+                    android:gravity="center"
+                    android:paddingLeft="12dp"
+                    android:paddingRight="12dp"
+                    android:text="●  LIVE"
+                    android:textColor="#FF86F3C6"
+                    android:textDirection="ltr"
+                    android:textSize="11sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:fontFamily="sans-serif-black"
+                android:lineSpacingExtra="2dp"
+                android:text="حوّل فكرتك إلى\nمحادثة استثنائية."
+                android:textColor="#FFF8F9FF"
+                android:textSize="31sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:lineSpacingExtra="4dp"
+                android:text="جهّز السؤال، رتّب صورك، ثم انتقل بسلاسة إلى Google AI — كل شيء يبدأ من مساحة واحدة جميلة وآمنة."
+                android:textColor="#FFB7C0DD"
+                android:textSize="15sp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="18dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="34dp"
+                    android:background="@drawable/studio_bg_chip"
+                    android:gravity="center"
+                    android:paddingLeft="12dp"
+                    android:paddingRight="12dp"
+                    android:text="✦  google.com/ai"
+                    android:textColor="#FFDCE2FF"
+                    android:textDirection="ltr"
+                    android:textSize="11sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="34dp"
+                    android:layout_marginStart="8dp"
+                    android:background="@drawable/studio_bg_chip"
+                    android:gravity="center"
+                    android:paddingLeft="12dp"
+                    android:paddingRight="12dp"
+                    android:text="خصوصية محلية"
+                    android:textColor="#FFDCE2FF"
+                    android:textSize="11sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+            <Button
+                android:id="@+id/openAiMode"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:layout_marginTop="22dp"
+                android:background="@drawable/studio_btn_primary"
+                android:backgroundTint="@null"
+                android:elevation="8dp"
+                android:fontFamily="sans-serif-medium"
+                android:gravity="center"
+                android:stateListAnimator="@null"
+                android:text="Prepare &amp; launch   ✦"
+                android:textAllCaps="false"
+                android:textColor="#FFFFFFFF"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="11dp"
+                android:gravity="center"
+                android:text="يفتح في نافذة آمنة داخل تجربة التطبيق"
+                android:textColor="#FF7F8AAF"
+                android:textSize="11sp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:background="@drawable/studio_bg_steps"
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:padding="12dp">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="①  أرفق"
+                android:textColor="#FFE0E5FA"
+                android:textSize="12sp"
+                android:textStyle="bold" />
+
+            <View
+                android:layout_width="1dp"
+                android:layout_height="18dp"
+                android:background="#FF2A3350" />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="②  اكتب"
+                android:textColor="#FFE0E5FA"
+                android:textSize="12sp"
+                android:textStyle="bold" />
+
+            <View
+                android:layout_width="1dp"
+                android:layout_height="18dp"
+                android:background="#FF2A3350" />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="③  انطلق"
+                android:textColor="#FFE0E5FA"
+                android:textSize="12sp"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="28dp"
+            android:fontFamily="sans-serif-medium"
+            android:text="مساحة الوسائط"
+            android:textColor="#FFF1F3FF"
+            android:textSize="19sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:text="اجمع حتى خمس صور، أو شاركها مباشرة من أي تطبيق."
+            android:textColor="#FF7F8AAA"
+            android:textSize="13sp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:background="@drawable/studio_bg_card"
+            android:elevation="4dp"
+            android:orientation="vertical"
+            android:padding="18dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="42dp"
+                    android:layout_height="42dp"
+                    android:background="@drawable/studio_bg_icon"
+                    android:gravity="center"
+                    android:text="◫"
+                    android:textColor="#FF9FB3FF"
+                    android:textSize="20sp"
+                    android:textStyle="bold" />
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="11dp"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="لوحة الصور"
+                        android:textColor="#FFF4F6FF"
+                        android:textSize="16sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="2dp"
+                        android:text="ترتيب ذكي وجاهز للرفع"
+                        android:textColor="#FF7782A2"
+                        android:textSize="11sp" />
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/status"
+                    android:layout_width="wrap_content"
+                    android:layout_height="34dp"
+                    android:background="@drawable/studio_bg_count_badge"
+                    android:gravity="center"
+                    android:minWidth="64dp"
+                    android:paddingLeft="12dp"
+                    android:paddingRight="12dp"
+                    android:text="0 / 5"
+                    android:textColor="#FFAFC0FF"
+                    android:textSize="12sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+            <HorizontalScrollView
+                android:layout_width="match_parent"
+                android:layout_height="124dp"
+                android:layout_marginTop="15dp"
+                android:background="@drawable/studio_bg_media_well"
+                android:clipToPadding="false"
+                android:fillViewport="true"
+                android:padding="12dp"
+                android:scrollbars="none">
+
+                <LinearLayout
+                    android:id="@+id/imageStrip"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal" />
+            </HorizontalScrollView>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="9dp"
+                android:text="تلميح: اضغط مطولًا على أي صورة لإزالتها."
+                android:textColor="#FF6F7A9A"
+                android:textSize="11sp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="13dp"
+                android:orientation="horizontal">
+
+                <Button
+                    android:id="@+id/pickImages"
+                    android:layout_width="0dp"
+                    android:layout_height="52dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/studio_btn_secondary"
+                    android:backgroundTint="@null"
+                    android:fontFamily="sans-serif-medium"
+                    android:stateListAnimator="@null"
+                    android:text="＋  اختيار الصور"
+                    android:textAllCaps="false"
+                    android:textColor="#FFE3E8FF"
+                    android:textSize="14sp"
+                    android:textStyle="bold" />
+
+                <Space
+                    android:layout_width="10dp"
+                    android:layout_height="1dp" />
+
+                <Button
+                    android:id="@+id/clearImages"
+                    android:layout_width="76dp"
+                    android:layout_height="52dp"
+                    android:background="@drawable/studio_btn_ghost"
+                    android:backgroundTint="@null"
+                    android:fontFamily="sans-serif-medium"
+                    android:stateListAnimator="@null"
+                    android:text="مسح"
+                    android:textAllCaps="false"
+                    android:textColor="#FFFF9EAF"
+                    android:textSize="13sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="28dp"
+            android:fontFamily="sans-serif-medium"
+            android:text="استوديو السؤال"
+            android:textColor="#FFF1F3FF"
+            android:textSize="19sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:text="امنح Google AI سياقًا دقيقًا لتحصل على إجابة أقوى."
+            android:textColor="#FF7F8AAA"
+            android:textSize="13sp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:background="@drawable/studio_bg_card"
+            android:elevation="4dp"
+            android:orientation="vertical"
+            android:padding="18dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="42dp"
+                    android:layout_height="42dp"
+                    android:background="@drawable/studio_bg_icon_purple"
+                    android:gravity="center"
+                    android:text="✎"
+                    android:textColor="#FFCDB2FF"
+                    android:textSize="20sp"
+                    android:textStyle="bold" />
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="11dp"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="اكتب طلبك"
+                        android:textColor="#FFF4F6FF"
+                        android:textSize="16sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="2dp"
+                        android:text="الوضوح يصنع الفارق"
+                        android:textColor="#FF7782A2"
+                        android:textSize="11sp" />
+                </LinearLayout>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="32dp"
+                    android:background="@drawable/studio_bg_chip"
+                    android:gravity="center"
+                    android:paddingLeft="10dp"
+                    android:paddingRight="10dp"
+                    android:text="PROMPT"
+                    android:textColor="#FFC7B5FF"
+                    android:textDirection="ltr"
+                    android:textSize="10sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+            <EditText
+                android:id="@+id/prompt"
+                android:layout_width="match_parent"
+                android:layout_height="142dp"
+                android:layout_marginTop="15dp"
+                android:background="@drawable/studio_bg_prompt_editor"
+                android:gravity="start|top"
+                android:hint="مثال: حلّل الصور بالتسلسل، ثم اقترح أفضل نتيجة مع شرح واضح..."
+                android:inputType="textCapSentences|textMultiLine"
+                android:lineSpacingExtra="4dp"
+                android:padding="16dp"
+                android:scrollbars="vertical"
+                android:textColor="#FFF3F5FF"
+                android:textColorHint="#FF626E91"
+                android:textCursorDrawable="@null"
+                android:textSize="15sp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="13dp"
+                android:orientation="horizontal">
+
+                <Button
+                    android:id="@+id/copyPrompt"
+                    android:layout_width="0dp"
+                    android:layout_height="52dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/studio_btn_secondary"
+                    android:backgroundTint="@null"
+                    android:fontFamily="sans-serif-medium"
+                    android:stateListAnimator="@null"
+                    android:text="نسخ السؤال  ⧉"
+                    android:textAllCaps="false"
+                    android:textColor="#FFE3E8FF"
+                    android:textSize="13sp"
+                    android:textStyle="bold" />
+
+                <Space
+                    android:layout_width="10dp"
+                    android:layout_height="1dp" />
+
+                <Button
+                    android:id="@+id/createCollage"
+                    android:layout_width="0dp"
+                    android:layout_height="52dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/studio_btn_accent"
+                    android:backgroundTint="@null"
+                    android:fontFamily="sans-serif-medium"
+                    android:stateListAnimator="@null"
+                    android:text="إنشاء اللوحة  ◈"
+                    android:textAllCaps="false"
+                    android:textColor="#FFFFFFFF"
+                    android:textSize="13sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="18dp"
+            android:background="@drawable/studio_bg_privacy"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:padding="16dp">
+
+            <TextView
+                android:layout_width="42dp"
+                android:layout_height="42dp"
+                android:background="@drawable/studio_bg_lock"
+                android:gravity="center"
+                android:text="✓"
+                android:textColor="#FF79E6BA"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="12dp"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="خصوصيتك أولًا"
+                    android:textColor="#FFDDF8ED"
+                    android:textSize="14sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="3dp"
+                    android:lineSpacingExtra="2dp"
+                    android:text="تجهيز الصور وإنشاء اللوحة يتمان محليًا على جهازك."
+                    android:textColor="#FF87A99C"
+                    android:textSize="12sp" />
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="LOCAL"
+                android:textColor="#FF66D7AB"
+                android:textDirection="ltr"
+                android:textSize="10sp"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:gravity="center"
+            android:letterSpacing="0.08"
+            android:text="DESIGNED FOR GOOGLE AI MODE"
+            android:textColor="#FF505B7A"
+            android:textDirection="ltr"
+            android:textSize="10sp"
+            android:textStyle="bold" />
+    </LinearLayout>
+    </ScrollView>
+
+    <View
+        android:id="@+id/portalScrim"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:alpha="0"
+        android:background="#A6070912"
+        android:clickable="true"
+        android:focusable="true"
+        android:visibility="gone" />
+
+    <LinearLayout
+        android:id="@+id/portalStage"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="center"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="14dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginBottom="16dp"
+        android:background="@drawable/studio_bg_portal_shell"
+        android:clipToOutline="true"
+        android:elevation="28dp"
+        android:focusable="true"
+        android:importantForAccessibility="yes"
+        android:orientation="vertical"
+        android:padding="1dp"
+        android:visibility="gone">
+
+        <LinearLayout
+            android:id="@+id/portalHeader"
+            android:layout_width="match_parent"
+            android:layout_height="68dp"
+            android:background="@drawable/studio_bg_portal_header"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:paddingLeft="8dp"
+            android:paddingRight="8dp">
+
+            <View
+                android:id="@+id/portalDragHandle"
+                android:layout_width="44dp"
+                android:layout_height="4dp"
+                android:layout_marginTop="7dp"
+                android:background="@drawable/studio_bg_drag_handle"
+                android:contentDescription="اسحب لتصغير النافذة" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="54dp"
+                android:gravity="center_vertical"
+                android:layoutDirection="ltr"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/closePortal"
+                    android:layout_width="44dp"
+                    android:layout_height="44dp"
+                    android:background="@drawable/studio_bg_portal_close"
+                    android:contentDescription="إغلاق بوابة الذكاء"
+                    android:gravity="center"
+                    android:text="×"
+                    android:textColor="#FFFFCBD4"
+                    android:textSize="25sp" />
+
+                <TextView
+                    android:id="@+id/minimizePortal"
+                    android:layout_width="44dp"
+                    android:layout_height="44dp"
+                    android:layout_marginLeft="5dp"
+                    android:background="@drawable/studio_bg_portal_control"
+                    android:contentDescription="تصغير بوابة الذكاء"
+                    android:gravity="center"
+                    android:text="—"
+                    android:textColor="#FFCBD4F5"
+                    android:textSize="18sp" />
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="42dp"
+                    android:layout_marginLeft="7dp"
+                    android:layout_marginRight="7dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/studio_bg_portal_address"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:paddingLeft="12dp"
+                    android:paddingRight="12dp">
+
+                    <TextView
+                        android:id="@+id/portalSecurityIcon"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="◆"
+                        android:textColor="#FF61E8B5"
+                        android:textSize="9sp" />
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="9dp"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/portalAddress"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:ellipsize="end"
+                            android:fontFamily="sans-serif-medium"
+                            android:maxLines="1"
+                            android:text="google.com/ai"
+                            android:textColor="#FFF0F3FF"
+                            android:textDirection="ltr"
+                            android:textSize="12sp" />
+
+                        <TextView
+                            android:id="@+id/portalState"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:ellipsize="end"
+                            android:maxLines="1"
+                            android:text="AI PORTAL • PRIVATE SESSION"
+                            android:textColor="#FF7180AA"
+                            android:textDirection="ltr"
+                            android:textSize="8sp"
+                            android:textStyle="bold" />
+                    </LinearLayout>
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/openPortalExternal"
+                    android:layout_width="44dp"
+                    android:layout_height="44dp"
+                    android:background="@drawable/studio_bg_portal_control"
+                    android:contentDescription="فتح في المتصفح الخارجي"
+                    android:gravity="center"
+                    android:text="↗"
+                    android:textColor="#FFAFC0FF"
+                    android:textSize="20sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <ProgressBar
+            android:id="@+id/portalProgress"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="match_parent"
+            android:layout_height="3dp"
+            android:indeterminate="false"
+            android:max="100"
+            android:progress="0"
+            android:progressDrawable="@drawable/studio_portal_progress"
+            android:visibility="invisible" />
+
+        <FrameLayout
+            android:id="@+id/portalViewport"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:background="#FF0B0E18">
+
+            <WebView
+                android:id="@+id/aiWebView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="#FF10131D"
+                android:contentDescription="صفحة Google AI المدمجة"
+                android:overScrollMode="never" />
+
+            <LinearLayout
+                android:id="@+id/portalLoading"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="#F50A0D18"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:padding="28dp">
+
+                <TextView
+                    android:id="@+id/portalLoadingOrb"
+                    android:layout_width="72dp"
+                    android:layout_height="72dp"
+                    android:background="@drawable/studio_bg_portal_orb"
+                    android:gravity="center"
+                    android:text="✦"
+                    android:textColor="#FFFFFFFF"
+                    android:textSize="29sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:fontFamily="sans-serif-medium"
+                    android:text="نفتح بوابتك إلى Google AI"
+                    android:textColor="#FFF1F4FF"
+                    android:textSize="17sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="7dp"
+                    android:gravity="center"
+                    android:text="تبقى أدوات الاستوديو خلفك، وجلسة الذكاء أمامك."
+                    android:textColor="#FF8592B8"
+                    android:textSize="12sp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/portalError"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="#FA0A0D18"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:padding="30dp"
+                android:visibility="gone">
+
+                <TextView
+                    android:layout_width="64dp"
+                    android:layout_height="64dp"
+                    android:background="@drawable/studio_bg_portal_error"
+                    android:gravity="center"
+                    android:text="!"
+                    android:textColor="#FFFFA6B5"
+                    android:textSize="28sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="18dp"
+                    android:text="انقطع الطريق للحظة"
+                    android:textColor="#FFF4F6FF"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/portalErrorMessage"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="7dp"
+                    android:gravity="center"
+                    android:text="تحقق من اتصالك ثم أعد المحاولة."
+                    android:textColor="#FF8793B5"
+                    android:textSize="13sp" />
+
+                <Button
+                    android:id="@+id/retryPortal"
+                    android:layout_width="180dp"
+                    android:layout_height="50dp"
+                    android:layout_marginTop="20dp"
+                    android:background="@drawable/studio_btn_secondary"
+                    android:backgroundTint="@null"
+                    android:stateListAnimator="@null"
+                    android:text="إعادة الاتصال  ↻"
+                    android:textAllCaps="false"
+                    android:textColor="#FFE7EBFF"
+                    android:textSize="13sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+        </FrameLayout>
+
+        <LinearLayout
+            android:id="@+id/portalDock"
+            android:layout_width="match_parent"
+            android:layout_height="58dp"
+            android:background="@drawable/studio_bg_portal_dock"
+            android:gravity="center_vertical"
+            android:layoutDirection="rtl"
+            android:orientation="horizontal"
+            android:paddingLeft="9dp"
+            android:paddingRight="12dp">
+
+            <TextView
+                android:id="@+id/portalCopyPrompt"
+                android:layout_width="92dp"
+                android:layout_height="40dp"
+                android:background="@drawable/studio_btn_portal_copy"
+                android:contentDescription="نسخ السؤال إلى الحافظة"
+                android:gravity="center"
+                android:text="نسخ السؤال"
+                android:textColor="#FFFFFFFF"
+                android:textSize="11sp"
+                android:textStyle="bold" />
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="11dp"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/portalPromptTitle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="end"
+                    android:maxLines="1"
+                    android:text="السؤال جاهز للصق"
+                    android:textColor="#FFE8ECFF"
+                    android:textSize="12sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/portalPromptPreview"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="end"
+                    android:maxLines="1"
+                    android:text="اكتب سؤالك في الاستوديو أو ابدأ مباشرة"
+                    android:textColor="#FF7180A8"
+                    android:textSize="9sp" />
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/portalBack"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:background="@drawable/studio_bg_portal_control"
+                android:contentDescription="رجوع داخل الصفحة"
+                android:gravity="center"
+                android:text="‹"
+                android:textColor="#FFCAD3F1"
+                android:textDirection="ltr"
+                android:textSize="28sp" />
+
+            <TextView
+                android:id="@+id/portalReload"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_marginStart="4dp"
+                android:background="@drawable/studio_bg_portal_control"
+                android:contentDescription="إعادة تحميل الصفحة"
+                android:gravity="center"
+                android:text="↻"
+                android:textColor="#FFCAD3F1"
+                android:textSize="17sp" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/portalPill"
+        android:layout_width="wrap_content"
+        android:layout_height="58dp"
+        android:layout_gravity="bottom|center_horizontal"
+        android:layout_marginLeft="18dp"
+        android:layout_marginRight="18dp"
+        android:layout_marginBottom="18dp"
+        android:background="@drawable/studio_bg_portal_pill"
+        android:clickable="true"
+        android:elevation="20dp"
+        android:focusable="true"
+        android:gravity="center_vertical"
+        android:layoutDirection="rtl"
+        android:orientation="horizontal"
+        android:paddingLeft="16dp"
+        android:paddingRight="10dp"
+        android:visibility="gone">
+
+        <TextView
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:background="@drawable/studio_bg_portal_orb"
+            android:gravity="center"
+            android:text="✦"
+            android:textColor="#FFFFFFFF"
+            android:textSize="17sp"
+            android:textStyle="bold" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Google AI ما زال هنا"
+                android:textColor="#FFF1F3FF"
+                android:textSize="12sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="المس للعودة إلى البوابة"
+                android:textColor="#FF8390B5"
+                android:textSize="9sp" />
+        </LinearLayout>
+
+        <TextView
+            android:layout_width="34dp"
+            android:layout_height="34dp"
+            android:layout_marginStart="12dp"
+            android:gravity="center"
+            android:text="⌃"
+            android:textColor="#FFAFC0FF"
+            android:textSize="17sp"
+            android:textStyle="bold" />
+    </LinearLayout>
+</FrameLayout>
