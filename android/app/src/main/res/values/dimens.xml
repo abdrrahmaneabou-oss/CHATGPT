@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <dimen name="screen_padding">20dp</dimen>
-    <dimen name="card_radius">28dp</dimen>
-    <dimen name="inner_radius">20dp</dimen>
-    <dimen name="bottom_bar_elevation">12dp</dimen>
-</resources>
-
