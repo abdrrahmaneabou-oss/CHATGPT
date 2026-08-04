@@ -12,8 +12,8 @@ android {
         applicationId = "app.aimode.studio"
         minSdk = 26
         targetSdk = 37
-        versionCode = 11
-        versionName = "2.0.1"
+        versionCode = 12
+        versionName = "2.1.0"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 

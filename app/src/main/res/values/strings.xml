@@ -42,7 +42,7 @@
     <string name="preview_prompt">Preview context capsule</string>
     <string name="compiled_prompt">Compiled prompt</string>
     <string name="launch_title">Ready to cross over</string>
-    <string name="launch_subtitle">Prompt copied · visual board saved locally · Google AI opens safely</string>
+    <string name="launch_subtitle">Prompt copied · visual board saved locally · AI Portal opens right here</string>
     <string name="launch_action">Prepare &amp; launch</string>
     <string name="launching">Building capsule…</string>
     <string name="copy_only">Copy prompt</string>
@@ -65,4 +65,19 @@
     <string name="selected_image">Selected image</string>
     <string name="prompt_empty">Add a clear goal before launching.</string>
     <string name="permission_rationale">Allow storage access to save the visual board.</string>
+    <string name="portal_title">AI Portal</string>
+    <string name="portal_address">google.com</string>
+    <string name="portal_secure">SECURE</string>
+    <string name="portal_capsule_ready">Context capsule copied · ready to paste</string>
+    <string name="portal_session_alive">Session stays alive · tap to return</string>
+    <string name="portal_close">Close AI Portal</string>
+    <string name="portal_minimize">Minimize AI Portal</string>
+    <string name="portal_restore">Return to AI Portal</string>
+    <string name="portal_external">Open in browser</string>
+    <string name="portal_back">Go back</string>
+    <string name="portal_forward">Go forward</string>
+    <string name="portal_reload">Reload page</string>
+    <string name="portal_error_title">The portal could not connect</string>
+    <string name="portal_error_body">Check your connection and try again, or continue in your browser.</string>
+    <string name="portal_retry">Try again</string>
 </resources>

@@ -42,7 +42,7 @@
     <string name="preview_prompt">عاين كبسولة السياق</string>
     <string name="compiled_prompt">السؤال المركّب</string>
     <string name="launch_title">جاهز للعبور</string>
-    <string name="launch_subtitle">يُنسخ السؤال · تُحفظ اللوحة محليًا · يفتح Google AI بأمان</string>
+    <string name="launch_subtitle">يُنسخ السؤال · تُحفظ اللوحة محليًا · تفتح بوابة الذكاء هنا</string>
     <string name="launch_action">حضّر وانطلق</string>
     <string name="launching">نبني الكبسولة…</string>
     <string name="copy_only">نسخ السؤال</string>
@@ -65,4 +65,19 @@
     <string name="selected_image">الصورة المحددة</string>
     <string name="prompt_empty">أضف هدفًا واضحًا قبل الإطلاق.</string>
     <string name="permission_rationale">اسمح بالتخزين لحفظ لوحة الصور.</string>
+    <string name="portal_title">بوابة الذكاء</string>
+    <string name="portal_address">google.com</string>
+    <string name="portal_secure">آمن</string>
+    <string name="portal_capsule_ready">نُسخت كبسولة السياق · جاهزة للصق</string>
+    <string name="portal_session_alive">الجلسة ما زالت حية · اضغط للعودة</string>
+    <string name="portal_close">إغلاق بوابة الذكاء</string>
+    <string name="portal_minimize">تصغير بوابة الذكاء</string>
+    <string name="portal_restore">العودة إلى بوابة الذكاء</string>
+    <string name="portal_external">فتح في المتصفح</string>
+    <string name="portal_back">رجوع</string>
+    <string name="portal_forward">تقدّم</string>
+    <string name="portal_reload">إعادة تحميل الصفحة</string>
+    <string name="portal_error_title">تعذّر اتصال البوابة</string>
+    <string name="portal_error_body">تحقق من اتصالك وحاول مجددًا، أو أكمل داخل متصفحك.</string>
+    <string name="portal_retry">حاول مجددًا</string>
 </resources>

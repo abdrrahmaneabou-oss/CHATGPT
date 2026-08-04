@@ -12,7 +12,21 @@ import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.browser.customtabs.CustomTabColorSchemeParams
 import androidx.browser.customtabs.CustomTabsIntent
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.spring
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.core.content.FileProvider
+import app.aimode.studio.ui.AiPortalHost
+import app.aimode.studio.ui.PortalPresentation
 import app.aimode.studio.ui.StudioScreen
 import app.aimode.studio.ui.StudioViewModel
 import app.aimode.studio.ui.theme.AIModeTheme
@@ -28,11 +42,42 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             AIModeTheme {
-                StudioScreen(
-                    viewModel = studioViewModel,
-                    onOpenAiMode = ::openAiMode,
-                    onShareBoard = ::shareBoard,
+                var savedPresentation by rememberSaveable {
+                    mutableStateOf(PortalPresentation.Closed.name)
+                }
+                val portalPresentation = PortalPresentation.valueOf(savedPresentation)
+                val workspaceScale by animateFloatAsState(
+                    targetValue = if (portalPresentation == PortalPresentation.Expanded) 0.965f else 1f,
+                    animationSpec = spring(dampingRatio = 0.86f, stiffness = 180f),
+                    label = "workspacePortalScale",
                 )
+                val workspaceAlpha by animateFloatAsState(
+                    targetValue = if (portalPresentation == PortalPresentation.Expanded) 0.62f else 1f,
+                    label = "workspacePortalAlpha",
+                )
+
+                Box(Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background)) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .graphicsLayer {
+                                scaleX = workspaceScale
+                                scaleY = workspaceScale
+                                alpha = workspaceAlpha
+                            },
+                    ) {
+                        StudioScreen(
+                            viewModel = studioViewModel,
+                            onOpenAiMode = { savedPresentation = PortalPresentation.Expanded.name },
+                            onShareBoard = ::shareBoard,
+                        )
+                    }
+                    AiPortalHost(
+                        presentation = portalPresentation,
+                        onPresentationChange = { savedPresentation = it.name },
+                        onOpenExternal = ::openExternal,
+                    )
+                }
             }
         }
     }
@@ -43,7 +88,11 @@ class MainActivity : ComponentActivity() {
         studioViewModel.acceptSharedIntent(intent)
     }
 
-    private fun openAiMode() {
+    private fun openExternal(uri: Uri) {
+        if (uri.scheme != "https" && uri.scheme != "http") {
+            openFallbackBrowser(uri)
+            return
+        }
         val colorScheme = CustomTabColorSchemeParams.Builder()
             .setToolbarColor(Color.rgb(21, 20, 17))
             .setNavigationBarColor(Color.rgb(12, 13, 15))
@@ -58,19 +107,19 @@ class MainActivity : ComponentActivity() {
                 .setUrlBarHidingEnabled(true)
                 .setShareState(CustomTabsIntent.SHARE_STATE_ON)
                 .build()
-                .launchUrl(this, AI_MODE_URI)
+                .launchUrl(this, uri)
         } catch (_: ActivityNotFoundException) {
-            openFallbackBrowser()
+            openFallbackBrowser(uri)
         } catch (_: SecurityException) {
-            openFallbackBrowser()
+            openFallbackBrowser(uri)
         } catch (_: RuntimeException) {
             Toast.makeText(this, R.string.open_failed, Toast.LENGTH_LONG).show()
         }
     }
 
-    private fun openFallbackBrowser() {
+    private fun openFallbackBrowser(uri: Uri) {
         try {
-            startActivity(Intent(Intent.ACTION_VIEW, AI_MODE_URI))
+            startActivity(Intent(Intent.ACTION_VIEW, uri))
         } catch (_: ActivityNotFoundException) {
             Toast.makeText(this, R.string.open_failed, Toast.LENGTH_LONG).show()
         }
@@ -90,9 +139,5 @@ class MainActivity : ComponentActivity() {
         }
         runCatching { startActivity(Intent.createChooser(share, getString(R.string.share_board))) }
             .onFailure { Toast.makeText(this, R.string.export_failed, Toast.LENGTH_LONG).show() }
-    }
-
-    private companion object {
-        val AI_MODE_URI: Uri = Uri.parse("https://www.google.com/ai")
     }
 }
