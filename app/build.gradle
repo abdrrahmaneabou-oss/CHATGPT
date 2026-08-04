@@ -27,8 +27,8 @@ android {
     }
 
     lint {
-        textReport true
-        textOutput "stdout"
+        textReport = true
+        textOutput = file("$buildDir/reports/lint-results-debug.txt")
     }
 }
 

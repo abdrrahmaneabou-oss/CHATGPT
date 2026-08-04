@@ -39,6 +39,13 @@ jobs:
       - name: Test, lint and build debug APK
         run: ./gradlew --no-daemon testDebugUnitTest lintDebug assembleDebug --stacktrace
 
+      - name: Print lint findings after failure
+        if: failure()
+        run: |
+          if [ -f app/build/reports/lint-results-debug.txt ]; then
+            cat app/build/reports/lint-results-debug.txt
+          fi
+
       - name: Upload installable APK
         uses: actions/upload-artifact@v4
         with:
