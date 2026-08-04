@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <style name="ShapeAppearanceOverlay.AIMode.Image">
+    <style name="ShapeAppearanceOverlayAIModeImage">
         <item name="cornerFamily">rounded</item>
         <item name="cornerSize">22dp</item>
     </style>
@@ -13,4 +13,3 @@
         <item name="strokeWidth">1dp</item>
     </style>
 </resources>
-

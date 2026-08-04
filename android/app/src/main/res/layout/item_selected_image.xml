@@ -14,7 +14,7 @@
         android:background="@color/app_surface_high"
         android:contentDescription="@string/content_description_selected_image_generic"
         android:scaleType="centerCrop"
-        app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.AIMode.Image"
+        app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlayAIModeImage"
         app:strokeColor="@color/app_outline"
         app:strokeWidth="1dp"
         tools:src="@drawable/ic_gallery" />
