@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="116dp"
+    android:layout_height="116dp"
+    android:layout_marginEnd="10dp">
+
+    <com.google.android.material.imageview.ShapeableImageView
+        android:id="@+id/thumbnail"
+        android:layout_width="112dp"
+        android:layout_height="112dp"
+        android:layout_gravity="center"
+        android:background="@color/app_surface_high"
+        android:contentDescription="@string/content_description_selected_image_generic"
+        android:scaleType="centerCrop"
+        app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.AIMode.Image"
+        app:strokeColor="@color/app_outline"
+        app:strokeWidth="1dp"
+        tools:src="@drawable/ic_gallery" />
+
+    <TextView
+        android:id="@+id/index"
+        android:layout_width="32dp"
+        android:layout_height="28dp"
+        android:layout_gravity="bottom|start"
+        android:layout_marginStart="8dp"
+        android:layout_marginBottom="8dp"
+        android:background="@drawable/bg_image_index"
+        android:fontFamily="sans-serif-bold"
+        android:gravity="center"
+        android:textColor="#FFFFFFFF"
+        android:textSize="12sp"
+        tools:text="03" />
+
+    <ImageButton
+        android:id="@+id/remove"
+        android:layout_width="34dp"
+        android:layout_height="34dp"
+        android:layout_gravity="top|end"
+        android:layout_marginTop="6dp"
+        android:layout_marginEnd="6dp"
+        android:background="@drawable/bg_image_index"
+        android:contentDescription="@string/remove_image_generic"
+        android:padding="7dp"
+        android:src="@drawable/ic_close" />
+
+    <ImageView
+        android:layout_width="28dp"
+        android:layout_height="24dp"
+        android:layout_gravity="bottom|end"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="10dp"
+        android:background="@drawable/bg_image_index"
+        android:contentDescription="@string/drag_hint"
+        android:padding="5dp"
+        android:src="@drawable/ic_drag" />
+</FrameLayout>
