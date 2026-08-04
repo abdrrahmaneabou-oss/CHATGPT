@@ -87,20 +87,24 @@ class StudioRepository(private val context: Context) {
         val imported = mutableListOf<VisualAsset>()
         var failures = 0
         uris.take(availableSlots).forEach { uri ->
+            var target: File? = null
             val result = runCatching {
                 val extension = extensionFor(uri)
-                val target = File(visualDirectory, "${UUID.randomUUID()}.$extension")
+                target = File(visualDirectory, "${UUID.randomUUID()}.$extension")
                 context.contentResolver.openInputStream(uri).use { input ->
                     requireNotNull(input) { "No readable stream" }
-                    FileOutputStream(target).use { output -> input.copyTo(output, DEFAULT_BUFFER_SIZE) }
+                    FileOutputStream(requireNotNull(target)).use { output -> input.copyTo(output, DEFAULT_BUFFER_SIZE) }
                 }
-                require(target.length() in 1..MAX_IMPORT_BYTES) { "Unsupported image size" }
+                require(requireNotNull(target).length() in 1..MAX_IMPORT_BYTES) { "Unsupported image size" }
                 VisualAsset(
                     id = UUID.randomUUID().toString(),
-                    localPath = target.absolutePath,
+                    localPath = requireNotNull(target).absolutePath,
                 )
             }
-            result.onSuccess(imported::add).onFailure { failures += 1 }
+            result.onSuccess(imported::add).onFailure {
+                target?.delete()
+                failures += 1
+            }
         }
         failures += (uris.size - availableSlots).coerceAtLeast(0)
         ImportResult(imported, failures)

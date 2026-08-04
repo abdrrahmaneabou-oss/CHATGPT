@@ -157,7 +157,7 @@ class StudioViewModel(application: Application) : AndroidViewModel(application) 
             val exportResult = if (exportBoard && workspace.visuals.isNotEmpty()) {
                 runCatching { withContext(Dispatchers.IO) { collageExporter.export(workspace, arabic) } }
             } else {
-                Result.success(null)
+                Result.success<Uri?>(null)
             }
             clipboard.setPrimaryClip(ClipData.newPlainText("AI Mode context capsule", prompt))
             val boardUri = exportResult.getOrNull()?.toString()
