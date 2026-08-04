@@ -44,20 +44,20 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.rounded.ArrowBack
+import androidx.compose.material.icons.automirrored.rounded.ArrowForward
+import androidx.compose.material.icons.automirrored.rounded.CompareArrows
+import androidx.compose.material.icons.automirrored.rounded.OpenInNew
 import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material.icons.rounded.AddPhotoAlternate
 import androidx.compose.material.icons.rounded.Analytics
-import androidx.compose.material.icons.rounded.ArrowBack
-import androidx.compose.material.icons.rounded.ArrowForward
 import androidx.compose.material.icons.rounded.AutoAwesome
 import androidx.compose.material.icons.rounded.Check
-import androidx.compose.material.icons.rounded.CompareArrows
 import androidx.compose.material.icons.rounded.ContentCopy
 import androidx.compose.material.icons.rounded.DataObject
 import androidx.compose.material.icons.rounded.DeleteOutline
 import androidx.compose.material.icons.rounded.Lightbulb
 import androidx.compose.material.icons.rounded.Lock
-import androidx.compose.material.icons.rounded.OpenInNew
 import androidx.compose.material.icons.rounded.Psychology
 import androidx.compose.material.icons.rounded.Refresh
 import androidx.compose.material.icons.rounded.Share
@@ -545,7 +545,7 @@ private fun LensCard(lens: ThinkingLens, selected: Boolean, onClick: () -> Unit)
     val title = lensTitle(lens)
     val icon = when (lens) {
         ThinkingLens.ANALYZE -> Icons.Rounded.Analytics
-        ThinkingLens.COMPARE -> Icons.Rounded.CompareArrows
+        ThinkingLens.COMPARE -> Icons.AutoMirrored.Rounded.CompareArrows
         ThinkingLens.EXTRACT -> Icons.Rounded.DataObject
         ThinkingLens.CREATE -> Icons.Rounded.Lightbulb
         ThinkingLens.SOLVE -> Icons.Rounded.Troubleshoot
@@ -647,13 +647,13 @@ private fun VisualSection(
                         )
                         Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
                             IconButton(onClick = { onMove(visual.id, -1) }, enabled = selectedIndex > 0) {
-                                Icon(Icons.Rounded.ArrowBack, contentDescription = stringResource(R.string.move_earlier))
+                                Icon(Icons.AutoMirrored.Rounded.ArrowBack, contentDescription = stringResource(R.string.move_earlier))
                             }
                             IconButton(
                                 onClick = { onMove(visual.id, 1) },
                                 enabled = selectedIndex in 0 until workspace.visuals.lastIndex,
                             ) {
-                                Icon(Icons.Rounded.ArrowForward, contentDescription = stringResource(R.string.move_later))
+                                Icon(Icons.AutoMirrored.Rounded.ArrowForward, contentDescription = stringResource(R.string.move_later))
                             }
                             Spacer(Modifier.weight(1f))
                             IconButton(onClick = { onRemove(visual.id) }) {
@@ -981,7 +981,7 @@ private fun LaunchButton(
                 Icon(Icons.Rounded.AutoAwesome, contentDescription = null, tint = Color.White, modifier = Modifier.size(19.dp))
             }
             Text(description, color = Color.White, style = MaterialTheme.typography.labelLarge, maxLines = 1)
-            if (!loading) Icon(Icons.Rounded.OpenInNew, contentDescription = null, tint = Color.White, modifier = Modifier.size(17.dp))
+            if (!loading) Icon(Icons.AutoMirrored.Rounded.OpenInNew, contentDescription = null, tint = Color.White, modifier = Modifier.size(17.dp))
         }
     }
 }
