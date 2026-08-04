@@ -1,11 +1,9 @@
-name: Android quality & APK
+name: Android quality gate
 
 on:
   push:
     branches: [main]
   pull_request:
-    branches: [main]
-  workflow_dispatch:
 
 permissions:
   contents: read
@@ -15,36 +13,27 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  build:
-    name: Test, lint and build
+  verify:
     runs-on: ubuntu-latest
     timeout-minutes: 25
-
     steps:
-      - name: Check out source
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Set up Java
-        uses: actions/setup-java@v4
+      - uses: actions/setup-java@v4
         with:
           distribution: temurin
-          java-version: 21
-          cache: gradle
+          java-version: "17"
 
-      - name: Set up Gradle
-        uses: gradle/actions/setup-gradle@v4
+      - uses: gradle/actions/setup-gradle@v4
 
-      - name: Test, lint and build debug APK
-        working-directory: android
-        run: |
-          chmod +x gradlew
-          ./gradlew --no-daemon testDebugUnitTest lintDebug assembleDebug
+      - name: Install Android 17 SDK
+        run: sdkmanager "platforms;android-37" "build-tools;36.0.0"
 
-      - name: Upload installable APK
-        uses: actions/upload-artifact@v4
+      - name: Test, lint, and build
+        run: ./gradlew testDebugUnitTest lintDebug assembleDebug --stacktrace
+
+      - uses: actions/upload-artifact@v4
         with:
-          name: AI-Mode-2.0-native
-          path: android/app/build/outputs/apk/debug/app-debug.apk
+          name: ai-mode-context-os-debug
+          path: app/build/outputs/apk/debug/app-debug.apk
           if-no-files-found: error
-          retention-days: 30
-
