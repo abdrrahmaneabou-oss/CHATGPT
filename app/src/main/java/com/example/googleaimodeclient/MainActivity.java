@@ -1,6 +1,7 @@
 package com.example.googleaimodeclient;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.ContentValues;
@@ -142,10 +143,14 @@ public class MainActivity extends AppCompatActivity {
         renderImages();
     }
 
+    @SuppressLint("WrongConstant")
     private void persistPermission(Intent data, Uri uri) {
         try {
-            getContentResolver().takePersistableUriPermission(uri, data.getFlags() &
-                    (Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION));
+            int persistableFlags = data.getFlags()
+                    & (Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+            if (persistableFlags != 0) {
+                getContentResolver().takePersistableUriPermission(uri, persistableFlags);
+            }
         } catch (SecurityException ignored) {
         }
     }

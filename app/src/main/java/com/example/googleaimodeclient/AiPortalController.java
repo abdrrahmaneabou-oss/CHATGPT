@@ -22,7 +22,6 @@ import android.view.HapticFeedbackConstants;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.accessibility.AccessibilityEvent;
 import android.view.animation.OvershootInterpolator;
 import android.view.animation.PathInterpolator;
 import android.view.inputmethod.InputMethodManager;
@@ -46,6 +45,7 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
+import androidx.core.view.ViewCompat;
 
 import java.util.ArrayList;
 import java.util.Locale;
@@ -107,6 +107,8 @@ public final class AiPortalController {
         studioScroll = activity.findViewById(R.id.studioScroll);
         scrim = activity.findViewById(R.id.portalScrim);
         stage = activity.findViewById(R.id.portalStage);
+        stage.setClipToOutline(true);
+        ViewCompat.setAccessibilityPaneTitle(stage, "Google AI Portal");
         dragHandle = activity.findViewById(R.id.portalDragHandle);
         pill = activity.findViewById(R.id.portalPill);
         webView = activity.findViewById(R.id.aiWebView);
@@ -181,7 +183,6 @@ public final class AiPortalController {
                         @Override
                         public void onAnimationEnd(Animator animation) {
                             stage.animate().setListener(null);
-                            stage.sendAccessibilityEvent(AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED);
                         }
                     })
                     .start();
