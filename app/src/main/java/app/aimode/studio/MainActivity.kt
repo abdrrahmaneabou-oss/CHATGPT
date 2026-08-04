@@ -10,6 +10,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
+import androidx.browser.customtabs.CustomTabColorSchemeParams
 import androidx.browser.customtabs.CustomTabsIntent
 import androidx.core.content.FileProvider
 import app.aimode.studio.ui.StudioScreen
@@ -45,12 +46,15 @@ class MainActivity : ComponentActivity() {
     private fun openAiMode() {
         val screenHeight = resources.displayMetrics.heightPixels
         val initialHeight = maxOf(screenHeight / 2, (screenHeight * 0.76f).toInt())
+        val colorScheme = CustomTabColorSchemeParams.Builder()
+            .setToolbarColor(Color.rgb(21, 20, 17))
+            .setNavigationBarColor(Color.rgb(12, 13, 15))
+            .setNavigationBarDividerColor(Color.rgb(61, 60, 56))
+            .build()
         try {
             CustomTabsIntent.Builder()
                 .setInitialActivityHeightPx(initialHeight, CustomTabsIntent.ACTIVITY_HEIGHT_ADJUSTABLE)
-                .setToolbarColor(Color.rgb(21, 20, 17))
-                .setNavigationBarColor(Color.rgb(12, 13, 15))
-                .setNavigationBarDividerColor(Color.rgb(61, 60, 56))
+                .setDefaultColorSchemeParams(colorScheme)
                 .setColorScheme(CustomTabsIntent.COLOR_SCHEME_SYSTEM)
                 .setToolbarCornerRadiusDp(24)
                 .setCloseButtonPosition(CustomTabsIntent.CLOSE_BUTTON_POSITION_END)
