@@ -18,7 +18,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
@@ -109,6 +108,7 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.progressBarRangeInfo
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
@@ -128,6 +128,7 @@ import app.aimode.studio.ui.StudioViewModel.StudioEvent
 import app.aimode.studio.ui.theme.Acid
 import app.aimode.studio.ui.theme.Ink
 import app.aimode.studio.ui.theme.Iris
+import app.aimode.studio.ui.theme.Paper
 import app.aimode.studio.ui.theme.Solar
 import java.io.File
 import kotlinx.coroutines.Dispatchers
@@ -276,7 +277,7 @@ fun StudioScreen(
         } else {
             LazyColumn(
                 modifier = Modifier.fillMaxSize(),
-                contentPadding = PaddingValues(start = 18.dp, top = 12.dp, end = 18.dp, bottom = 132.dp),
+                contentPadding = PaddingValues(start = 18.dp, top = 12.dp, end = 18.dp, bottom = 28.dp),
                 verticalArrangement = Arrangement.spacedBy(18.dp),
             ) {
                 item { StudioHeader(onReset = { showResetDialog = true }) }
@@ -314,19 +315,19 @@ fun StudioScreen(
                         }
                     }
                 }
+                item {
+                    MobileLaunchCard(
+                        state = state,
+                        readiness = readiness,
+                        onLaunch = ::beginLaunch,
+                    )
+                }
             }
-
-            LaunchDock(
-                modifier = Modifier.align(Alignment.BottomCenter),
-                state = state,
-                readiness = readiness,
-                onLaunch = ::beginLaunch,
-            )
         }
 
         SnackbarHost(
             hostState = snackbarHostState,
-            modifier = Modifier.align(Alignment.BottomCenter).padding(bottom = if (wide) 12.dp else 112.dp),
+            modifier = Modifier.align(Alignment.BottomCenter).padding(bottom = 12.dp),
         )
     }
 
@@ -372,49 +373,69 @@ private fun ContextAtmosphere() {
 
 @Composable
 private fun StudioHeader(onReset: () -> Unit) {
-    Row(
-        modifier = Modifier.fillMaxWidth(),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(12.dp),
-    ) {
-        OrbitMark()
-        Column(Modifier.weight(1f)) {
-            Text(
-                text = stringResource(R.string.app_name),
-                style = MaterialTheme.typography.titleLarge,
-            )
-            Text(
-                text = stringResource(R.string.brand_kicker),
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                fontSize = 10.sp,
-                fontWeight = FontWeight.Black,
-                letterSpacing = 1.7.sp,
-            )
-        }
-        Surface(
-            shape = CircleShape,
-            color = MaterialTheme.colorScheme.tertiaryContainer,
-            contentColor = MaterialTheme.colorScheme.onTertiaryContainer,
+    BoxWithConstraints(Modifier.fillMaxWidth()) {
+        val showPrivacyLabel = maxWidth >= 390.dp
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(if (showPrivacyLabel) 12.dp else 8.dp),
         ) {
-            Row(
-                modifier = Modifier.padding(horizontal = 11.dp, vertical = 8.dp),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(6.dp),
-            ) {
-                Icon(Icons.Rounded.Lock, contentDescription = null, modifier = Modifier.size(14.dp))
-                Text(stringResource(R.string.privacy_local), style = MaterialTheme.typography.labelLarge, fontSize = 11.sp)
+            OrbitMark()
+            Column(Modifier.weight(1f)) {
+                Text(
+                    text = stringResource(R.string.app_name),
+                    style = MaterialTheme.typography.titleLarge,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                )
+                Text(
+                    text = stringResource(R.string.brand_kicker),
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    fontSize = 10.sp,
+                    fontWeight = FontWeight.Black,
+                    letterSpacing = 1.7.sp,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                )
             }
-        }
-        IconButton(onClick = onReset) {
-            Icon(Icons.Rounded.Refresh, contentDescription = stringResource(R.string.reset_workspace))
+            Surface(
+                shape = CircleShape,
+                color = MaterialTheme.colorScheme.tertiaryContainer,
+                contentColor = MaterialTheme.colorScheme.onTertiaryContainer,
+            ) {
+                Row(
+                    modifier = Modifier.padding(
+                        horizontal = if (showPrivacyLabel) 11.dp else 9.dp,
+                        vertical = 8.dp,
+                    ),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(6.dp),
+                ) {
+                    Icon(
+                        Icons.Rounded.Lock,
+                        contentDescription = stringResource(R.string.privacy_local),
+                        modifier = Modifier.size(14.dp),
+                    )
+                    if (showPrivacyLabel) {
+                        Text(
+                            stringResource(R.string.privacy_local),
+                            style = MaterialTheme.typography.labelLarge,
+                            fontSize = 11.sp,
+                            maxLines = 1,
+                        )
+                    }
+                }
+            }
+            IconButton(onClick = onReset) {
+                Icon(Icons.Rounded.Refresh, contentDescription = stringResource(R.string.reset_workspace))
+            }
         }
     }
 }
 
 @Composable
 private fun OrbitMark() {
-    val surface = MaterialTheme.colorScheme.onBackground
-    Canvas(Modifier.size(46.dp).clip(RoundedCornerShape(15.dp)).background(surface)) {
+    Canvas(Modifier.size(46.dp).clip(RoundedCornerShape(15.dp)).background(Ink)) {
         val center = Offset(size.width / 2f, size.height / 2f)
         drawCircle(Acid, radius = size.minDimension * 0.11f, center = center)
         drawArc(
@@ -435,11 +456,11 @@ private fun ContextHero(readiness: Readiness) {
     val shape = RoundedCornerShape(34.dp)
     Surface(
         shape = shape,
-        color = MaterialTheme.colorScheme.onBackground,
-        contentColor = MaterialTheme.colorScheme.background,
+        color = Ink,
+        contentColor = Paper,
         modifier = Modifier.fillMaxWidth(),
     ) {
-        Box(Modifier.fillMaxWidth().drawBehind {
+        BoxWithConstraints(Modifier.fillMaxWidth().drawBehind {
             drawCircle(Iris.copy(alpha = 0.32f), radius = size.minDimension * 0.62f, center = Offset(size.width, 0f))
             drawCircle(Solar.copy(alpha = 0.18f), radius = size.minDimension * 0.42f, center = Offset(0f, size.height))
             repeat(3) { index ->
@@ -455,24 +476,54 @@ private fun ContextHero(readiness: Readiness) {
                 )
             }
         }) {
-            Row(
-                modifier = Modifier.fillMaxWidth().padding(24.dp),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(18.dp),
-            ) {
-                Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(12.dp)) {
+            val compact = maxWidth < 420.dp
+            if (compact) {
+                Column(
+                    modifier = Modifier.fillMaxWidth().padding(22.dp),
+                    verticalArrangement = Arrangement.spacedBy(12.dp),
+                ) {
+                    Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) {
+                        ReadinessDial(readiness, compact = true)
+                    }
                     Text(
                         text = stringResource(R.string.hero_title),
                         style = MaterialTheme.typography.displaySmall,
                         color = Color(0xFFF8F3E9),
+                        maxLines = 4,
+                        overflow = TextOverflow.Ellipsis,
                     )
                     Text(
                         text = stringResource(R.string.hero_body),
                         style = MaterialTheme.typography.bodyMedium,
                         color = Color(0xFFBDBAB3),
+                        maxLines = 5,
+                        overflow = TextOverflow.Ellipsis,
                     )
                 }
-                ReadinessDial(readiness)
+            } else {
+                Row(
+                    modifier = Modifier.fillMaxWidth().padding(24.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(18.dp),
+                ) {
+                    Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                        Text(
+                            text = stringResource(R.string.hero_title),
+                            style = MaterialTheme.typography.displaySmall,
+                            color = Color(0xFFF8F3E9),
+                            maxLines = 4,
+                            overflow = TextOverflow.Ellipsis,
+                        )
+                        Text(
+                            text = stringResource(R.string.hero_body),
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = Color(0xFFBDBAB3),
+                            maxLines = 5,
+                            overflow = TextOverflow.Ellipsis,
+                        )
+                    }
+                    ReadinessDial(readiness)
+                }
             }
         }
     }
@@ -552,9 +603,12 @@ private fun LensCard(lens: ThinkingLens, selected: Boolean, onClick: () -> Unit)
     Surface(
         onClick = onClick,
         shape = RoundedCornerShape(22.dp),
-        color = if (selected) MaterialTheme.colorScheme.onBackground else MaterialTheme.colorScheme.surface,
-        contentColor = if (selected) MaterialTheme.colorScheme.background else MaterialTheme.colorScheme.onSurface,
-        border = BorderStroke(1.dp, if (selected) Color.Transparent else MaterialTheme.colorScheme.outlineVariant),
+        color = if (selected) Ink else MaterialTheme.colorScheme.surface,
+        contentColor = if (selected) Paper else MaterialTheme.colorScheme.onSurface,
+        border = BorderStroke(
+            1.dp,
+            if (selected) Acid.copy(alpha = 0.45f) else MaterialTheme.colorScheme.outlineVariant,
+        ),
     ) {
         Column(
             modifier = Modifier.width(112.dp).padding(15.dp),
@@ -858,8 +912,8 @@ private fun CapsulePanel(
     Surface(
         modifier = modifier,
         shape = RoundedCornerShape(34.dp),
-        color = MaterialTheme.colorScheme.onBackground,
-        contentColor = MaterialTheme.colorScheme.background,
+        color = Ink,
+        contentColor = Paper,
     ) {
         Column(Modifier.padding(24.dp), verticalArrangement = Arrangement.spacedBy(18.dp)) {
             Row(verticalAlignment = Alignment.CenterVertically) {
@@ -886,7 +940,7 @@ private fun CapsulePanel(
                     overflow = TextOverflow.Ellipsis,
                 )
             }
-            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 TextButton(onClick = onCopy, enabled = prompt.isNotBlank()) {
                     Icon(Icons.Rounded.ContentCopy, contentDescription = null)
                     Spacer(Modifier.width(6.dp))
@@ -915,40 +969,59 @@ private fun CapsulePanel(
 }
 
 @Composable
-private fun BoxScope.LaunchDock(
-    modifier: Modifier,
+private fun MobileLaunchCard(
     state: StudioUiState,
     readiness: Readiness,
     onLaunch: () -> Unit,
 ) {
     Surface(
-        modifier = modifier.fillMaxWidth().padding(horizontal = 14.dp, vertical = 10.dp),
-        shape = RoundedCornerShape(28.dp),
-        color = MaterialTheme.colorScheme.onBackground,
-        contentColor = MaterialTheme.colorScheme.background,
-        shadowElevation = 14.dp,
+        modifier = Modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(30.dp),
+        color = Ink,
+        contentColor = Paper,
     ) {
-        Row(
-            modifier = Modifier.padding(10.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(11.dp),
+        Column(
+            modifier = Modifier.padding(18.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp),
         ) {
-            ReadinessDial(readiness, compact = true)
-            Column(Modifier.weight(1f)) {
-                Text(stringResource(R.string.launch_title), color = Color.White, style = MaterialTheme.typography.titleMedium)
-                Text(
-                    readinessHint(readiness),
-                    color = Color.White.copy(alpha = 0.55f),
-                    fontSize = 10.sp,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                )
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(14.dp),
+            ) {
+                ReadinessDial(readiness, compact = true)
+                Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(2.dp)) {
+                    Text(
+                        stringResource(R.string.launch_title),
+                        color = Paper,
+                        style = MaterialTheme.typography.titleMedium,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                    )
+                    Text(
+                        readinessHint(readiness),
+                        color = Paper.copy(alpha = 0.62f),
+                        style = MaterialTheme.typography.bodyMedium,
+                        maxLines = 2,
+                        overflow = TextOverflow.Ellipsis,
+                    )
+                }
             }
             LaunchButton(
                 loading = state.isLaunching,
                 enabled = state.workspace.goal.isNotBlank(),
                 onClick = onLaunch,
+                modifier = Modifier.fillMaxWidth(),
             )
+            Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(7.dp)) {
+                Icon(Icons.Rounded.Lock, contentDescription = null, tint = Acid, modifier = Modifier.size(14.dp))
+                Text(
+                    stringResource(R.string.workspace_private),
+                    color = Paper.copy(alpha = 0.58f),
+                    fontSize = 11.sp,
+                    maxLines = 2,
+                    overflow = TextOverflow.Ellipsis,
+                )
+            }
         }
     }
 }
@@ -973,14 +1046,30 @@ private fun LaunchButton(
             .semantics { contentDescription = description },
         contentAlignment = Alignment.Center,
     ) {
-        Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+        ) {
             if (loading) {
                 CircularProgressIndicator(Modifier.size(18.dp), color = Color.White, strokeWidth = 2.dp)
             } else {
                 Icon(Icons.Rounded.AutoAwesome, contentDescription = null, tint = Color.White, modifier = Modifier.size(19.dp))
             }
-            Text(description, color = Color.White, style = MaterialTheme.typography.labelLarge, maxLines = 1)
-            if (!loading) Icon(Icons.AutoMirrored.Rounded.OpenInNew, contentDescription = null, tint = Color.White, modifier = Modifier.size(17.dp))
+            Text(
+                description,
+                modifier = Modifier.weight(1f),
+                color = Color.White,
+                style = MaterialTheme.typography.labelLarge,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+                textAlign = TextAlign.Center,
+            )
+            if (!loading) {
+                Icon(Icons.AutoMirrored.Rounded.OpenInNew, contentDescription = null, tint = Color.White, modifier = Modifier.size(17.dp))
+            } else {
+                Spacer(Modifier.size(17.dp))
+            }
         }
     }
 }
